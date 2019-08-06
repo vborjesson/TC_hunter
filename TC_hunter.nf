@@ -3,18 +3,21 @@
 params.bam = ''
 params.construct_length = ''
 params.workingDir = ''
+params.tc_hunter_path = ''
+params.dry_run = ''
+params.dry_run_softclipped = ''
 
+workingdirectory = params.workingDir
 
 //sequences = Channel
 //                .fromPath(params.bam)
 //                .map { file -> tuple(file.baseName, file) }
 
 
-
 //----------------------Extract reds with soft clips in construct-------------------------------
 
 process extract_reads {
-	publishDir params.workingDir, mode: 'copy'
+	publishDir workingdirectory, mode: 'copy', overwrite: true
 	errorStrategy 'ignore'
 
 	module 'samtools/1.9'
@@ -26,16 +29,27 @@ process extract_reads {
 		file "softclipped.sam" into softclipped_out	
 
 	script:
+
+	if (params.dry_run){
+
 	"""
-		../Code/runSoftClipExtraction.sh ${params.bam} softclipped.sam 	
+		echo 'hej'
+		cp ${params.dry_run_softclipped} softclipped.sam 	
+	"""		
+
+	}else{
+
+	"""
+		bash ${params.tc_hunter_path}/Scripts/runSoftClipExtraction.sh ${params.bam} softclipped.sam 	
 	"""	
+	}
 }
 
 
 //----------------------Extract positions and create links.txt-------------------------------
 
 process create_links {
-	publishDir params.workingDir, mode: 'copy'
+	publishDir params.workingDir, mode: 'copy', overwrite: true
 	errorStrategy 'ignore'
 
 	input:
@@ -46,7 +60,7 @@ process create_links {
 
 	script:
 	"""
-		python ../Code/FindLinks.py --sam ${softclipped.sam}  
+		python ${params.tc_hunter_path}/Scripts/FindLinks.py --sam ${sam}  
 	"""	
 
 }
@@ -67,7 +81,7 @@ process create_karyotype {
 
 	script:
 	"""
-		python ../Code/createKaryotype.py --links ${links} --construct_length ${params.construct_length}  
+		python ${params.tc_hunter_path}/Scripts/createKaryotype.py --links ${links} --construct_length ${params.construct_length}  
 	"""	
 }
 
@@ -88,7 +102,7 @@ process create_histogram {
 	script:
 
 	"""
-		python ../Code/createHistogram.py --karyo ${karyo_file} --bam ${params.bam} 
+		python ${params.tc_hunter_path}/Scripts/createHistogram.py --karyo ${karyo_file} --bam ${params.bam} 
 	"""	
 
 }
