@@ -46,6 +46,7 @@ process extract_reads {
 }
 
 
+
 //----------------------Extract positions and create links.txt-------------------------------
 
 process create_links {
@@ -66,6 +67,12 @@ process create_links {
 }
 
 
+// outputs can only be used once as input in a new process, therefor we copy them into several identical outputs. 
+links_out.into {
+  	links_out_karyo
+	links_out_circos
+}
+
 
 //----------------------Create karyotype file-------------------------------
 
@@ -74,7 +81,7 @@ process create_karyotype {
 	errorStrategy 'ignore'
 
 	input:
-		file links from links_out
+		file links from links_out_karyo
 
 	output:
 		file 'karyotype.txt' into karyotype_out
@@ -83,6 +90,11 @@ process create_karyotype {
 	"""
 		python ${params.tc_hunter_path}/Scripts/createKaryotype.py --links ${links} --construct_length ${params.construct_length}  
 	"""	
+}
+
+karyotype_out.into {
+  	karyotype_out_hist
+	karyotype_out_circos
 }
 
 
@@ -94,7 +106,7 @@ process create_histogram {
 	errorStrategy 'ignore'
 
 	input:
-		file karyo_file from karyotype_out
+		file karyo_file from karyotype_out_hist
 
 	output:
 		file 'hist.txt' into hist_out	
@@ -106,4 +118,30 @@ process create_histogram {
 	"""	
 
 }
+
+//----------------------Run Circos-------------------------------
+
+process create_plots {
+	publishDir params.workingDir, mode: 'copy', overwrite: true
+	errorStrategy 'ignore'
+
+	module "circos/0.69"
+
+	input:
+		file 'links.txt' from links_out_circos
+		file 'karyotype.txt' from karyotype_out_hist
+		file 'hist.txt' into hist_out 
+
+	output:
+		set 'circos.png', 'circos.tif' into circos_out 
+
+	script:
+	"""
+		circos -conf ${params.tc_hunter_path}/Circos/circos.conf
+	"""				
+
+}
+
+
+
 
