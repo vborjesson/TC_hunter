@@ -52,7 +52,7 @@ def create_depth (kar, bam):
 
 
 def create_hist (file):
-	with open (file, 'r') as f_in, open ('hist.txt', 'w') as f_out:
+	with open (file, 'r') as f_in, open ('hist_all.txt', 'w') as f_out:
 		# print list
 		l_list = []
 		for line in f_in:
@@ -68,9 +68,24 @@ def create_hist (file):
 					f_out.write('{} {} {} {}'.format(l_list[0], l_list[1], l_list[2], l_list[3]))
 					l_list = [l[0], l[1], l[1], l[2]]	
 
+def check_hist_length (hist_file):
+	with open (hist_file, 'r') as f_in:
+		counter = 0
+		for line in f_in:
+			counter += 1
 
+	print (counter)
 
+	if counter > 50000:
+		subprocess.call ('cat ' + hist_file + ' |awk "NR % 4 == 0" > hist.txt', shell = True)	
+
+	elif counter > 24000:
+		subprocess.call ('cat ' + hist_file + ' |awk "NR % 2 == 0" > hist.txt', shell = True)	
+
+	else:
+		subprocess.call('cp ' + hist_file + ' hist.txt', shell = True)	
 
 # Run functions
 create_depth(kar, bam)			
 create_hist('depth.tsv')
+check_hist_length('hist_all.txt')

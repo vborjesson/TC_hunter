@@ -6,6 +6,7 @@ params.workingDir = ''
 params.tc_hunter_path = ''
 params.dry_run = ''
 params.dry_run_softclipped = ''
+params.construct_name = ''
 
 workingdirectory = params.workingDir
 
@@ -14,7 +15,7 @@ workingdirectory = params.workingDir
 //                .map { file -> tuple(file.baseName, file) }
 
 
-//----------------------Extract reds with soft clips in construct-------------------------------
+//----------------------Extract reads with soft clips in construct-------------------------------
 
 process extract_reads {
 	publishDir workingdirectory, mode: 'copy', overwrite: true
@@ -33,7 +34,6 @@ process extract_reads {
 	if (params.dry_run){
 
 	"""
-		echo 'hej'
 		cp ${params.dry_run_softclipped} softclipped.sam 	
 	"""		
 
@@ -46,10 +46,31 @@ process extract_reads {
 }
 
 
+//----------------------Extract reads with supplementary alignments in construct-------------------------------
+
+process create_links_sup {
+	publishDir workingdirectory, mode: 'copy', overwrite: true
+	errorStrategy 'ignore'
+
+	module 'samtools/1.9'
+
+	output:
+		file "sup_links.txt" into sup_links	
+
+	script:
+		"""
+		bash ${params.tc_hunter_path}/Scripts/ExtractConstruct.sh ${params.bam} ${params.construct_name}
+		python ${params.tc_hunter_path}/Scripts/ExtractConstruct.py ${params.construct_name}.sam sup_links.txt
+		"""
+
+}
+
+
+
 
 //----------------------Extract positions and create links.txt-------------------------------
 
-process create_links {
+process create_links_soft {
 	publishDir params.workingDir, mode: 'copy', overwrite: true
 	errorStrategy 'ignore'
 
@@ -115,6 +136,7 @@ process create_histogram {
 
 	"""
 		python ${params.tc_hunter_path}/Scripts/createHistogram.py --karyo ${karyo_file} --bam ${params.bam} 
+	 	
 	"""	
 
 }
@@ -129,11 +151,12 @@ process create_plots {
 
 	input:
 		file 'links.txt' from links_out_circos
-		file 'karyotype.txt' from karyotype_out_hist
-		file 'hist.txt' into hist_out 
+		file 'karyotype.txt' from karyotype_out_circos
+		file 'hist.txt' from hist_out 
+		file "sup_links.txt" from sup_links
 
 	output:
-		set 'circos.png', 'circos.tif' into circos_out 
+		set 'circos.png', 'circos.svg' into circos_out 
 
 	script:
 	"""
