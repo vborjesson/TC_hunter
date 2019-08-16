@@ -1,9 +1,10 @@
 # TC_hunter
 
-TC-hunter identifies transgenic insertion sites within host genome
+## TC-hunter identifies transgenic insertion sites within host genome
 
-![](Plots/plot1.png)
-![](Plots/plot2.png)
+Takes a sorted bam file mapped to host genome and construct together as input, and output a plot and txt-file with possible breakpoints of insertion sites. 
+The blue links correspond to reads with supplementary aligned reads in construct, and the gray links are soft clipped reads (one part of the read map to construct and the other to construct).  
+
 
 ## Install 
 
@@ -16,3 +17,10 @@ Install required programs and tools using Anaconda
 conda env create --file TC_hunter/Scripts/Nextflow_env.txt
 ```
 
+## Run 
+
+```
+nextflow TC_hunter.nf 
+```
+
+![](Plots/plot1.png)
