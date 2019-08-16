@@ -97,7 +97,7 @@ def create_karyotype (links, length):
 			bp_min = int(min(karyo_dict[chrom])) - 5000
 			chr_name = '{}{}'.format('chr', str(chrom))
 
-			f_out.write('{} {} {} {} {} {} {}\n'.format('chr', '-', chrom, chrom, bp_min, bp_max, chr_name))
+			f_out.write('{} {} {} {} {} {} {}\n'.format('chr', '-', chrom, chrom, bp_min, bp_max, "255,128,0"))
 
 		# Print construct to file
 		
