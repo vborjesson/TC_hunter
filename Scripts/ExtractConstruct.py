@@ -20,3 +20,6 @@ df = df[~df.cigar.str.contains('H')]
 # drop all column that we don't need 
 df_keep = df[['chr1', 'pos1', 'pos1', 'chr2', 'pos2', 'pos2']]
 df_keep.to_csv(out, index=False, header=False, sep=' ')
+
+
+
