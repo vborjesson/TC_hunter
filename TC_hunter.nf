@@ -1,14 +1,7 @@
 #!/usr/bin/env nextflow
 
-params.bam = ''
-params.construct_length = ''
-params.workingDir = ''
-params.tc_hunter_path = ''
-params.dry_run = ''
-params.dry_run_softclipped = ''
-params.construct_name = ''
-
 workingdirectory = params.workingDir
+construct_file = file(params.construct_file)
 
 //sequences = Channel
 //                .fromPath(params.bam)
@@ -82,7 +75,7 @@ process create_links_soft {
 
 	script:
 	"""
-		python ${params.tc_hunter_path}/Scripts/FindLinks.py --sam ${sam}  
+		python ${params.tc_hunter_path}/Scripts/FindLinks.py --sam ${sam} --mapq ${params.mapq} 
 	"""	
 
 }
@@ -126,6 +119,8 @@ process create_histogram {
 	publishDir params.workingDir, mode: 'copy'
 	errorStrategy 'ignore'
 
+	module 'samtools/1.9'
+
 	input:
 		file karyo_file from karyotype_out_hist
 
@@ -147,7 +142,8 @@ process create_plots {
 	publishDir params.workingDir, mode: 'copy', overwrite: true
 	errorStrategy 'ignore'
 
-	module "circos/0.69"
+	module "R/3.5.1"
+	module "igv"
 
 	input:
 		file 'links.txt' from links_out_circos
@@ -156,11 +152,11 @@ process create_plots {
 		file "sup_links.txt" from sup_links
 
 	output:
-		set 'circos.png', 'circos.svg' into circos_out 
+		file 'circlize.pdf' into circos_out 
 
 	script:
 	"""
-		circos -conf ${params.tc_hunter_path}/Circos/circos.conf
+		python ${params.tc_hunter_path}/Scripts/createOutput.py --hist hist.txt --links links.txt --sup_links sup_links.txt --karyo karyotype.txt --construct $construct_file --WorkDir ${params.workingDir} --tchunter ${params.tc_hunter_path} --bam ${params.bam} --ref ${params.reference}
 	"""				
 
 }

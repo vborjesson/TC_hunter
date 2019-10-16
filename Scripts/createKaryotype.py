@@ -93,8 +93,8 @@ def create_karyotype (links, length):
 			if len(karyo_dict[chrom]) < threshold:
 				continue
 
-			bp_max = int(max(karyo_dict[chrom])) + 10000
-			bp_min = int(min(karyo_dict[chrom])) - 10000
+			bp_max = int(max(karyo_dict[chrom])) + 5000
+			bp_min = int(min(karyo_dict[chrom])) - 5000
 			chr_name = '{}{}'.format('chr', str(chrom))
 
 			f_out.write('{} {} {}\n'.format(chrom, bp_min, bp_max))

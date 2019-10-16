@@ -27,8 +27,12 @@ parser = argparse.ArgumentParser(description=usage)
 parser.add_argument('--hist', dest='hist', help = 'hist.txt', required=True)
 parser.add_argument('--links', dest='links', help = 'links.txt', required=True)
 parser.add_argument('--sup_links', dest='sup_links', help = 'sup_links.txt', required=True)
-parser.add_argument('--karyo', dest='karyo', help = 'tmp_karyotype.txt', required=True)
+parser.add_argument('--karyo', dest='karyo', help = 'karyotype.txt', required=True)
 parser.add_argument('--construct', dest='construct', help = 'construct.txt', required=True)
+parser.add_argument('--WorkDir', dest='WD', help = 'WorkingDir', required=True)
+parser.add_argument('--tchunter', dest='TC', help = 'Path to TC_hunter', required=True)
+parser.add_argument('--bam', dest='bam', help = 'path to bam file', required=True)
+parser.add_argument('--ref', dest='ref', help = 'reference fasta file for host', required=True)
 
 args = parser.parse_args()
 
@@ -37,7 +41,10 @@ links = args.links
 sup_links = args.sup_links
 karyo = args.karyo
 construct = args.construct
-
+WD = args.WD
+TC = args.TC
+bam = args.bam
+ref = args.ref
 
 ########################################### ranking function ###########################################
 
@@ -52,8 +59,26 @@ def rank_sites (kar, links, sup_links):
 			
 
 		if len(site_list) == 2:
-			subprocess.call ('cp ' + kar + ' > tmp_karyotype.txt', shell = True)
-			makePlot_R()
+			subprocess.call ('cat ' + str(kar) + ' > tmp_karyotype.txt', shell = True)
+			first_line = True
+			with open (kar, 'r') as f_in:
+				for line in f_in:
+					if first_line:
+						print('this is the first line')
+						line = line.split(' ')
+						biomart_string = '{}:{}:{}'.format(line[0], line[1], line[2])
+						igv_position_1 = '{}:{}-{}'.format(line[0], int(line[1])+4900, int(line[2])-4900)
+						igv_position_2 = '{}:{}-{}'.format(line[0], int(line[1])+4600, int(line[2])-4600)
+						first_line == False
+						break	
+
+				Gene_annotation_R(biomart_string)
+				out_name_R = str('circlize.pdf')
+				out_name_igv_1 = str ('igv_zoom.png')
+				out_name_igv_2 = str ('igv.png')
+				makePlot_R(out_name_R)
+				makePlot_igv(igv_position_1, out_name_igv_1)
+				makePlot_igv(igv_position_2, out_name_igv_2)
 
 		else: 
 			link_df = pd.read_csv(links, sep=' ', names=['chrom1', 'start1','start2', 'chrom2', 'end1', 'end2'])
@@ -103,16 +128,24 @@ def rank_sites (kar, links, sup_links):
 				R_karyo_string_construct = '{} {} {}'.format(R_karyo_construct[0], R_karyo_construct[1], R_karyo_construct[2]) 
 
 				# Make file
-				subprocess.call('echo chr start end > tmp_karyotype.txt', shell = True)
-				subprocess.call('echo ' + R_karyo_string + ' >> tmp_karyotype.txt', shell = True)  
-				subprocess.call('echo ' + R_karyo_string_construct + ' >> tmp_karyotype.txt', shell = True)
+				subprocess.call('echo chr start end > ' + WD + '/tmp_karyotype.txt', shell = True)
+				subprocess.call('echo ' + R_karyo_string + ' >> ' + WD + '/tmp_karyotype.txt', shell = True)  
+				subprocess.call('echo ' + R_karyo_string_construct + ' >> ' + WD + '/tmp_karyotype.txt', shell = True)
 
 				# make position string for biomart gene annotation
 				biomart_karyo_string = '{}:{}:{}'.format(R_karyo[0], R_karyo[1], R_karyo[2]) 
 				Gene_annotation_R(biomart_karyo_string)
 
-				output_name = '{}{}'.format((i+1),'_circlize.pdf') 
-				makePlot_R(output_name)
+				# Make position string for igv 
+				igv_position_1 = '{}:{}-{}'.format(R_karyo[0], int(R_karyo[1])+4950, int(R_karyo[2])-4950) 
+				igv_position_2 = '{}:{}-{}'.format(R_karyo[0], int(R_karyo[1])+4600, int(R_karyo[2])-4600) 
+				out_name_R = '{}{}'.format((i+1),'_circlize.pdf') 
+				out_name_igv_1 = '{}{}'.format((i+1),'_igv_zoom.png') 
+				out_name_igv_2 = '{}{}'.format((i+1),'_igv.png') 
+				makePlot_R(out_name_R)
+
+				makePlot_igv(igv_position_1, out_name_igv_1)
+				makePlot_igv(igv_position_2, out_name_igv_2)
 
 			#print (karyo_df)	
 			#print (link_df)
@@ -124,21 +157,44 @@ def rank_sites (kar, links, sup_links):
 
 ########################################### create gene annotation function ###########################################
 def Gene_annotation_R (position):
-	print('Rscrip Scripts/biomart.R ' + position)
-	subprocess.call('Rscript Scripts/biomart.R ' + position, shell = True)
+	print('Rscrip ' + TC + '/Scripts/biomart.R ' + position)
+	subprocess.call('Rscript ' + TC + '/Scripts/biomart.R ' + position, shell = True)
 
 
 
 ########################################### Plot function ###########################################
 def makePlot_R (out_name):
-	print('Rscript Scripts/circlize.R ', out_name)
-	subprocess.call('Rscript Scripts/circlize.R ' + out_name, shell = True)
+	print('Rscript ' + TC + '/Scripts/circlize.R ', out_name + ' ' + construct)
+	subprocess.call('Rscript ' + TC + '/Scripts/circlize.R ' + out_name + ' ' + construct, shell = True)
 
 
 #def makePlot_python ():	
 
+########################################### IGV function ###########################################
+def makePlot_igv (position, out_name):
+
+	# Create batch file to use as input in igv 
+	subprocess.call ('echo new > ' + WD + '/igv.bat', shell = True)
+	subprocess.call ('echo load ' + bam + ' >> ' + WD + '/igv.bat', shell= True)
+	subprocess.call ('echo snapshotDirectory ' + WD +  ' >> ' + WD + '/igv.bat', shell = True)
+	subprocess.call ('echo genome ' + ref +  ' >> ' + WD + '/igv.bat', shell = True)
+	subprocess.call ('echo goto ' + position +  ' >> ' + WD + '/igv.bat', shell = True)
+	subprocess.call ('echo sort base >> ' + WD + '/igv.bat', shell = True)
+	subprocess.call ('echo collapse  >> ' + WD + '/igv.bat', shell = True)
+	subprocess.call ('echo snapshot ' + out_name + ' >> ' + WD + '/igv.bat', shell = True)	
+	subprocess.call ('echo exit >> ' + WD + '/igv.bat', shell = True)
+
+	print('igv.bat file is done!')
+	print('igv.sh -b ' + WD + '/igv.bat')
+
+	#subprocess.call ('igv.sh -b ' + WD + '/igv.bat', shell = True)
+
+	subprocess.call ('igv.sh -b ' + WD + '/igv.bat', shell = True)
+
 
 ########################################### Create html output ###########################################
+
+
 
 ########################################### run functions #############################################
 

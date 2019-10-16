@@ -1,13 +1,14 @@
 #!/usr/bin/env Rscript
 
-# install.packages("circlize")
+if (!require('circlize')) install.packages('circlize'); library('circlize')
 
 ##########################################
 
-library(circlize)
+library(dplyr)
+
 args = commandArgs(trailingOnly=TRUE)
 options(warn=-1)
-log(-1) 
+#log(-1) 
 #option_list = list(
 #  make_option(c("-f", "--links"), type="character", default='links.txt', 
 #              help="links file", metavar="character"),
@@ -29,12 +30,19 @@ log(-1)
 # Load data
 links <- data.table::fread("links.txt", data.table = F)
 sup_links <- data.table::fread("sup_links.txt", data.table = F)
-karyo <- data.table::fread("1_tmp_karyotype.txt", data.table = F)
+karyo <- data.table::fread("tmp_karyotype.txt", data.table = F)
 genes <- data.table::fread('genes.csv', data.table = F) 
-construct <- data.table::fread('construct.csv', data.table = F)
+#construct <- data.table::fread('construct.txt', data.table = F)
 hist <- data.table::fread("hist.txt", data.table = F)
 out <- args[1]
-out <- 'out_test2.pdf'
+construct_path <- args[2]
+construct <- data.table::fread(construct_path, data.table = F)
+#out <- 'out_test2.pdf'
+
+#out <- 'out.pdf'
+#construct_path = 'construct.txt'
+
+construct
 
 chrom_name = karyo[1,1]
 construct_name = karyo[2,1]
@@ -43,6 +51,9 @@ hist_split <- split(hist, hist$V1)
 
 hist_chrom <- hist_split[[chrom_name]]
 hist_construct <- hist_split[[construct_name]]
+
+#nrow(hist_chrom)
+#nrow(hist_construct)
 
 # Data wrangling
 hist_to_long <- function(d){
@@ -59,6 +70,10 @@ hist_to_long <- function(d){
 chrom_table <- hist_to_long(hist_chrom)
 chrom_table$id <- chrom_name
 
+#nrow(chrom_table)
+chrom_table <- distinct(chrom_table)
+#head(chrom_table)
+
 construct_table <- hist_to_long(hist_construct)
 construct_table$id <- construct_name
 
@@ -69,11 +84,18 @@ max_h <- max(chrom_table$read_depth)
 max_h
 #circos.initializeWithIdeogram(plotType = NULL)
 
+
+
+
+
+#-----------------------------------------------------------------------------------
+############################### Plot circle plot ###################################
+#-----------------------------------------------------------------------------------
+
 pdf(out,width=10,height=10,paper='special')
 
 # Initiate plot 
 circos.genomicInitialize(karyo, tickLabelsStartFromZero = FALSE, axis.labels.cex = 1, labels.cex = 1.5, major.by = 1000)
-
 # add track 
 circos.track(factors = df$id, ylim = c(0, 2), bg.col = c("#BDBDBD", "#8A0808"), track.height=0.02, cell.padding=c(0,0,0,0))
 #circos.track(factors = genes$chromosome_name, ylim = c(0, 2), bg.col = c("#D9681D", "#15576D"), track.height=0.02, cell.padding=c(0,0,0,0))
@@ -93,32 +115,34 @@ for (pos in 1:nrow(construct)){
 
 # restrict genes to be within region 
 
-for (pos in 1:nrow(genes)){
-	# restrict genes to be within region  	
-	if (genes[pos, 5] < karyo[1,2]){
-		genes[pos, 5] <- karyo[1,2]
-	}	
-	if (genes[pos, 6] > karyo[1,3]){
-		genes[pos, 6] <- karyo[1,3]
+ if (nrow(genes) > 1){
+	for (pos in 1:nrow(genes)){
+		# restrict genes to be within region  	
+		if (genes[pos, 5] < karyo[1,2]){
+			genes[pos, 5] <- karyo[1,2]
+		}	
+		if (genes[pos, 6] > karyo[1,3]){
+			genes[pos, 6] <- karyo[1,3]
+		}
+		# Create gene-ines for annotations 
+		circos.lines(c(genes[pos,5], genes[pos,6]), c(0.5, 0.5), sector.index = chrom_name, col='#2E2E2E', track.index=3)
 	}
-	# Create gene-ines for annotations 
-	circos.lines(c(genes[pos,5], genes[pos,6]), c(0.5, 0.5), sector.index = chrom_name, col='#2E2E2E', track.index=3)
+
+	a_start_pos <- genes$start_position
+	a_end_pos <- genes$start_position + 80
+	a_box <- data.frame(a_start_pos, a_end_pos)
+	#a_box
+
+	a_start_pos <- genes$end_position
+	a_end_pos <- genes$end_position + 20
+	b_box <- data.frame(a_start_pos, a_end_pos)
+	#b_box
+
+	box <- rbind(a_box, b_box)
+	#box
+
+	circos.genomicRect(box, ytop=1, ybottom=0, col='black', sector.index=chrom_name, track.index=3)
 }
-
-a_start_pos <- genes$start_position
-a_end_pos <- genes$start_position + 80
-a_box <- data.frame(a_start_pos, a_end_pos)
-#a_box
-
-a_start_pos <- genes$end_position
-a_end_pos <- genes$end_position + 20
-b_box <- data.frame(a_start_pos, a_end_pos)
-#b_box
-
-box <- rbind(a_box, b_box)
-#box
-
-circos.genomicRect(box, ytop=1, ybottom=0, col='black', sector.index=chrom_name, track.index=3)
 
 # Add text to genes 
 #for (pos in 1:nrow(genes)){
@@ -156,6 +180,38 @@ for (i in 1:nrow(links)){
 
 dev.off()
 circos.clear()
+
+
+
+
+
+#-----------------------------------------------------------------------------------
+############################### Plot line plot ###################################
+#-----------------------------------------------------------------------------------
+
+
+head(chrom_table)
+
+library(ggplot2)
+pdf('test_lineplot.pdf',width=20,height=5,paper='special')
+p2 <- ggplot() + geom_line(aes(x=position, y= read_depth), data = chrom_table, stat="identity") 
+p2 + geom_rect(aes(xmin = 69401000, ymin = -Inf, 
+                 xmax = 69401500, ymax = Inf),
+             fill = "steelblue") 
+p2
+dev.off()
+
+
+pdf('test_lineplot.pdf',width=20,height=5,paper='special')
+p2 <- ggplot()+
+	geom_rect(aes(xmin = 69401000, ymin = -Inf, 
+                 xmax = 69401500, ymax = Inf),
+             fill = "steelblue", alpha = 0.5) +	
+	geom_line(aes(x=position, y= read_depth), data = chrom_table, stat="identity") 
+	theme_bw()
+p2
+dev.off()
+
 
 
 

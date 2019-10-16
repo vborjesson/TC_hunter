@@ -42,14 +42,15 @@ def create_depth (kar, bam):
 		for line in f_in:
 			l = line.split(' ')
 			#print(l)
-			chrom = l[2]
-			start_pos = l[4]
-			end_pos = l[5]
+			chrom = l[0]
+			start_pos = l[1]
+			end_pos = l[2].rstrip()
 
 			# run samtools to find depth 
-			print (script + chrom + ':' + start_pos + '-' + end_pos + ' ' + bam + output)
-			subprocess.call(script + chrom + ':' + start_pos + '-' + end_pos + ' ' + bam + output, shell=True)
-
+			command = str(script + chrom + ':' + start_pos + '-' + end_pos + ' ' + bam + output)
+			print('this is the command :' , command)
+			os.system(command)
+		
 
 def create_hist (file):
 	with open (file, 'r') as f_in, open ('hist_all.txt', 'w') as f_out:
