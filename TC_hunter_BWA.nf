@@ -8,16 +8,55 @@ construct_file = file(params.construct_file)
 //                .map { file -> tuple(file.baseName, file) }
 
 
-//----------------------Extract reads with soft clips in construct-------------------------------
 
-process extract_reads {
+
+
+//----------------------Run BWA mem (mapping)-------------------------------
+
+process bwa_mem {
+	publishDir workingdirectory, mode: 'copy', overwrite: true
+	errorStrategy 'ignore'
+
+	module 'bwa/0.7.5a:samtools/0.1.19'
+
+	output:
+		file "BWA_sorted.bam" into bwa_mem_out	
+		file "JointRefGenome.fasta" into bwa_mem_out_ref
+
+	script:
+
+	"""
+		cat ${params.host_reference} > JointRefGenome.fasta
+		cat ${params.construct_ref} >> JointRefGenome.fasta
+		bwa index JointRefGenome.fasta
+		bwa mem JointRefGenome.fasta ${params.fastq1} ${params.fastq2} | samtools view -Sb - >  bwa_mem.bam	
+		samtools sort bwa_mem.bam -o BWA_sorted.bam
+		samtools index BWA_sorted.bam	
+	
+	"""	
+	
+}
+
+// outputs can only be used once as input in a new process, therefor we copy them into several identical outputs. 
+bwa_mem_out.into {
+  	bwa_mem_out_extractReads
+	bwa_mem_out_links
+	bwa_mem_out_hist
+	bwa_mem_out_plots
+}
+
+
+
+//----------------------Extract reads with soft clips in construct = BWA mem-------------------------------
+
+process extract_reads_bwa {
 	publishDir workingdirectory, mode: 'copy', overwrite: true
 	errorStrategy 'ignore'
 
 	module 'samtools/1.9'
 
-//	input:
-//		set file_ID, file from sequences
+	input:
+		file bam from bwa_mem_out_extractReads
 
 	output:
 		file "softclipped.sam" into softclipped_out	
@@ -33,10 +72,11 @@ process extract_reads {
 	}else{
 
 	"""
-		bash ${params.tc_hunter_path}/Scripts/runSoftClipExtraction.sh ${params.bam} softclipped.sam 	
+		bash ${params.tc_hunter_path}/Scripts/runSoftClipExtraction.sh $bam softclipped.sam 	
 	"""	
 	}
 }
+
 
 
 //----------------------Extract reads with supplementary alignments in construct-------------------------------
@@ -47,12 +87,15 @@ process create_links_sup {
 
 	module 'samtools/1.9'
 
+	input:
+		file bam from bwa_mem_out_links
+
 	output:
 		file "sup_links.txt" into sup_links	
 
 	script:
 		"""
-		bash ${params.tc_hunter_path}/Scripts/ExtractConstruct.sh ${params.bam} ${params.construct_name}
+		bash ${params.tc_hunter_path}/Scripts/ExtractConstruct.sh $bam ${params.construct_name}
 		python ${params.tc_hunter_path}/Scripts/ExtractConstruct.py ${params.construct_name}.sam sup_links.txt
 		"""
 
@@ -123,6 +166,7 @@ process create_histogram {
 
 	input:
 		file karyo_file from karyotype_out_hist
+		file bam from bwa_mem_out_hist		
 
 	output:
 		file 'hist.txt' into hist_out	
@@ -130,13 +174,13 @@ process create_histogram {
 	script:
 
 	"""
-		python ${params.tc_hunter_path}/Scripts/createHistogram.py --karyo ${karyo_file} --bam ${params.bam} 
+		python ${params.tc_hunter_path}/Scripts/createHistogram.py --karyo ${karyo_file} --bam $bam 
 	 	
 	"""	
 
 }
 
-//----------------------Run Circos-------------------------------
+//----------------------Cretae Plots-------------------------------
 
 process create_plots {
 	publishDir params.workingDir, mode: 'copy', overwrite: true
@@ -150,13 +194,22 @@ process create_plots {
 		file 'karyotype.txt' from karyotype_out_circos
 		file 'hist.txt' from hist_out 
 		file "sup_links.txt" from sup_links
+		file bam from bwa_mem_out_plots
+		file jointRef from bwa_mem_out_ref
 
 	output:
 		file 'circlize.pdf' into circos_out 
 
 	script:
 	"""
-		python ${params.tc_hunter_path}/Scripts/createOutput.py --hist hist.txt --links links.txt --sup_links sup_links.txt --karyo karyotype.txt --construct $construct_file --WorkDir ${params.workingDir} --tchunter ${params.tc_hunter_path} --bam ${params.bam} --ref ${params.reference}
+		python ${params.tc_hunter_path}/Scripts/createOutput.py --hist hist.txt --links links.txt --sup_links sup_links.txt --karyo karyotype.txt --construct $construct_file --WorkDir ${params.workingDir} --tchunter ${params.tc_hunter_path} --bam $bam --ref $jointRef
 	"""				
 
 }
+
+
+
+
+
+
+

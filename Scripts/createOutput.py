@@ -90,7 +90,7 @@ def rank_sites (kar, links, sup_links):
 			karyo_df = karyo_df_all[:-1]
 			construct_df = karyo_df_all[-1:]
 
-			# Add new csolumn for score 
+			# Add new column for score 
 			karyo_df = karyo_df.assign(score = '')
 
 			# Convert sup_link_df chromosomes to string instead of integer
@@ -99,7 +99,7 @@ def rank_sites (kar, links, sup_links):
 			
 			#print(karyo_df)
 			
-			# count witch site is the most suported
+			# count which site is the most suported
 			for i in range(len(karyo_df)):
 				site = karyo_df['chrom'].iloc[i]
 				
