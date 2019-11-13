@@ -30,8 +30,8 @@ process bwa_mem {
 		cat ${params.construct_ref} >> JointRefGenome.fasta
 		bwa index JointRefGenome.fasta
 		bwa mem JointRefGenome.fasta ${params.fastq1} ${params.fastq2} | samtools view -Sb - >  bwa_mem.bam	
-		samtools sort bwa_mem.bam -o BWA_sorted.bam
-		samtools index BWA_sorted.bam	
+		samtools sort bwa_mem.bam BWA_sorted
+		samtools index BWA_sorted.bam.bam	
 	
 	"""	
 	

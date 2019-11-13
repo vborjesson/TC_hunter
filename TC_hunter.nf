@@ -136,7 +136,7 @@ process create_histogram {
 
 }
 
-//----------------------Run Circos-------------------------------
+//----------------------Run Outputs-------------------------------
 
 process create_plots {
 	publishDir params.workingDir, mode: 'copy', overwrite: true

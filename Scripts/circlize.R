@@ -93,6 +93,7 @@ max_h
 #-----------------------------------------------------------------------------------
 
 pdf(out,width=10,height=10,paper='special')
+#png(out, width=1000, height=1000, res=300)
 
 # Initiate plot 
 circos.genomicInitialize(karyo, tickLabelsStartFromZero = FALSE, axis.labels.cex = 1, labels.cex = 1.5, major.by = 1000)

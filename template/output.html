@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>TC-hunter output</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Style the header */
+header {
+  background-color: #B0C4DE;
+  padding: 5px;
+  text-align: left;
+  font-size: 50px;
+  color: black;
+}
+
+info {
+  background-color: white;
+  padding: 5px;
+  text-align: left;
+  font-size: 20px;
+  color: black;
+}
+
+
+/* Create two columns/boxes that floats next to each other */
+nav {
+  float: left;
+  width: 10%;
+  height: 300px; /* only for demonstration, should be removed */
+  background: #ccc;
+  padding: 50px;
+}
+
+/* Style the list inside the menu */
+nav ul {
+  list-style-type: none;
+  padding: 5px;
+}
+
+article {
+  float: left;
+  padding: 50px;
+  width: 40%;
+  background-color: #f1f1f1;
+  height: 300px; /* only for demonstration, should be removed */
+}
+
+figures {
+  float: left;
+  padding: 50px;
+  width: 40%;
+  background-color: #f1f1f1;
+  height: 300px; /* only for demonstration, should be removed */
+}
+
+/* Clear floats after the columns */
+section:after {
+  content: "   ";
+  display: table;
+  clear: both;
+}
+
+/* Style the footer */
+footer {
+  background-color: #B0C4DE;
+  padding: 10px;
+  text-align: center;
+  color: white;
+}
+
+/* Responsive layout - makes the two columns/boxes stack on top of each other instead of next to each other, on small screens */
+@media (max-width: 600px) {
+  nav, article {
+    width: 100%;
+    height: auto;
+  }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h2>TC-hunter output</h2>
+</header>
+
+<info>
+  <p>
+    The predicted insertion site is based on the number of highly scored supplementary aligned and softclipped reads that can be detected in both host and construct genome
+  </p>
+</info>
+
+<section>
+  <nav>
+    <h2>Best scored insertion site </h2>
+
+  </nav>
+  
+  <article>
+    <h2>Breakpoint position in host genome </h2>
+    <h1>£££££ </h1> 
+    <hr size="4" align="left" color="darkgrey">
+
+    <h2>Breakpoint position in construct </h2>
+    <h1>ˇˇˇˇˇ </h1> 
+
+
+  </article>
+  <figures>
+    <h2>figures</h2>
+
+    <a href="ªªªªª"><img src="ªªªªª" title="Example Image Link" width="180" height="180" /></a> &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;
+    <a href="ßßßßß"><img src="ßßßßß" title="Example Image Link" width="180" height="180" /></a> &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;
+     <a href="®®®®®"><img src="®®®®®" title="Example Image Link" width="180" height="180" /></a> 
+     
+
+  </figures>
+
+</section>
+
+<section:after>
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;
+
+</section:after>
+
+<footer>
+  <p>TC-hunter v.0.0 &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; Contact information: https://github.com/vborjesson/TC_hunter</p>
+
+</footer>
+
+</body>
