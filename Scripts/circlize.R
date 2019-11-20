@@ -37,8 +37,8 @@ hist <- data.table::fread("hist.txt", data.table = F)
 out <- args[1]
 construct_path <- args[2]
 construct <- data.table::fread(construct_path, data.table = F)
-#out <- 'out_test2.pdf'
 
+#out <- 'circ_test.pdf'
 #out <- 'out.pdf'
 #construct_path = 'construct.txt'
 
@@ -78,9 +78,10 @@ construct_table <- hist_to_long(hist_construct)
 construct_table$id <- construct_name
 
 df <- rbind(chrom_table, construct_table)
-#head(df)
 
-max_h <- max(chrom_table$read_depth)
+#head(chrom_table)
+#head(df)
+max_h <- max(df$read_depth)
 max_h
 #circos.initializeWithIdeogram(plotType = NULL)
 
@@ -165,18 +166,27 @@ for (i in 1:nrow(sup_links)){
 	#print(sup_links[i,6])
 	circos.link(sup_links[i,1], c(sup_links[i,2]-20, sup_links[i,3]+20), sup_links[i,4], c(sup_links[i,5]-20, sup_links[i,6]+20), col = "#B40404")}, 
         error=function(error_message) {
-            message("This is my custom message.")
-            message("And below is the error message from R:")
+            #message("This is my custom message.")
+            #message("And below is the error message from R:")
             message(error_message)
             return(NA)
         }
     )
 }
 
-
+head(sup_links)
+head(links)
 for (i in 1:nrow(links)){
+	tryCatch({
 	#print(sup_links[i,6])
-	circos.link(links[i,1], c(links[i,2]-30, links[i,3]+30), links[i,4], c(links[i,5]-30, links[i,6]+30), col = "#1C1C1C")
+	circos.link(links[i,1], c(links[i,2]-30, links[i,3]+30), links[i,4], c(links[i,5]-30, links[i,6]+30), col = "#1C1C1C")},
+        error=function(error_message) {
+            #message("This is my custom message.")
+            #message("And below is the error message from R:")
+            message(error_message)
+            return(NA)
+		}            
+	)	
 }
 
 dev.off()
@@ -189,29 +199,29 @@ circos.clear()
 #-----------------------------------------------------------------------------------
 ############################### Plot line plot ###################################
 #-----------------------------------------------------------------------------------
+#
 
+#head(chrom_table)#
 
-head(chrom_table)
+#library(ggplot2)
+#pdf('test_lineplot.pdf',width=20,height=5,paper='special')
+#p2 <- ggplot() + geom_line(aes(x=position, y= read_depth), data = chrom_table, stat="identity") 
+#p2 + geom_rect(aes(xmin = 69401000, ymin = -Inf, 
+#                 xmax = 69401500, ymax = Inf),
+#             fill = "steelblue") 
+#p2
+#dev.off()#
+#
 
-library(ggplot2)
-pdf('test_lineplot.pdf',width=20,height=5,paper='special')
-p2 <- ggplot() + geom_line(aes(x=position, y= read_depth), data = chrom_table, stat="identity") 
-p2 + geom_rect(aes(xmin = 69401000, ymin = -Inf, 
-                 xmax = 69401500, ymax = Inf),
-             fill = "steelblue") 
-p2
-dev.off()
-
-
-pdf('test_lineplot.pdf',width=20,height=5,paper='special')
-p2 <- ggplot()+
-	geom_rect(aes(xmin = 69401000, ymin = -Inf, 
-                 xmax = 69401500, ymax = Inf),
-             fill = "steelblue", alpha = 0.5) +	
-	geom_line(aes(x=position, y= read_depth), data = chrom_table, stat="identity") 
-	theme_bw()
-p2
-dev.off()
+#pdf('test_lineplot.pdf',width=20,height=5,paper='special')
+#p2 <- ggplot()+
+#	geom_rect(aes(xmin = 69401000, ymin = -Inf, 
+#                 xmax = 69401500, ymax = Inf),
+#             fill = "steelblue", alpha = 0.5) +	
+#	geom_line(aes(x=position, y= read_depth), data = chrom_table, stat="identity") 
+#	theme_bw()
+#p2
+#dev.off()
 
 
 

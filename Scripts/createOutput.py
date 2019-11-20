@@ -15,9 +15,9 @@ test run on simulated data.
 #!/bin/bash -ue
 python /jumbo/WorkingDir/B19-001/TC_hunter/Scripts/createOutput.py --hist hist.txt --links links.txt --sup_links 
 sup_links.txt --karyo karyotype.txt --construct /jumbo/WorkingDir/B19-001/Intermediate/tc_wgsim/construct.txt 
---WorkDir /jumbo/WorkingDir/B19-001/Intermediate/tc_wgsim_igv --tchunter /jumbo/WorkingDir/B19-001/TC_hunter 
---bam /jumbo/WorkingDir/B19-001/Intermediate/wgsim/PPM1D_M42_BWA_sorted.bam.bam 
---ref /jumbo/WorkingDir/B19-001/Data/Raw/Ref/JointRefGenome.fasta
+--WorkDir /jumbo/WorkingDir/B19-001/Intermediate/wgsim_2insite/tc_hunter --tchunter /jumbo/WorkingDir/B19-001/TC_hunter 
+--bam /jumbo/WorkingDir/B19-001/Intermediate/wgsim_2insite/tc_hunter/BWA_sorted.bam 
+--ref /jumbo/WorkingDir/B19-001/Intermediate/wgsim_2insite/tc_hunter/JointRefGenome.fasta
 
 
 
@@ -88,7 +88,7 @@ def rank_sites (kar, links, sup_links):
 						igv_position_1 = '{}:{}-{}'.format(R_karyo[0], int(R_karyo[1])+4900, int(R_karyo[2])-4900) # igv span
 						igv_position_2 = '{}:{}-{}'.format(R_karyo[0], int(R_karyo[1])+4600, int(R_karyo[2])-4600) # igv span zoomed
 
-						html_host_bp = '{} - {}'.format(int(R_karyo[1])+5000, int(R_karyo[2])-5000) # bp position to be reported
+						html_host_bp = '{} - {}'.format(int(R_karyo[1])+5000+1, int(R_karyo[2])-5000) # bp position to be reported
 						
 						first_line = False
 						continue
@@ -97,7 +97,7 @@ def rank_sites (kar, links, sup_links):
 
 						R_karyo_construct = line.split(' ')
 
-						const_bp1, const_bp2 = find_construct_bp(links, R_karyo[0], int(R_karyo[1])+5000, int(R_karyo[2])-5000)
+						const_bp1, const_bp2 = find_construct_bp(links, R_karyo[0], int(R_karyo[1])+5000+1, int(R_karyo[2])-5000)
 						html_cons_bp = '{} - {}'.format(const_bp1, const_bp2) # bp position to be reported
 							
 
@@ -107,9 +107,10 @@ def rank_sites (kar, links, sup_links):
 				out_name_igv_2 = str ('igv.png')
 				out_name_html = str('best_output.html')
 				makePlot_R(out_name_R)
-				makePlot_igv(igv_position_1, out_name_igv_1)
-				makePlot_igv(igv_position_2, out_name_igv_2)
-				makeHTML_output(R_karyo[0], html_host_bp, R_karyo_construct[0], html_cons_bp, out_name_R, out_name_igv_1, out_name_igv_2, out_name_html) # Create output file 
+				#makePlot_igv(igv_position_1, out_name_igv_1)
+				#makePlot_igv(igv_position_2, out_name_igv_2)
+				makeHTML_pre(R_karyo[0], html_host_bp, R_karyo_construct[0], html_cons_bp, out_name_R, out_name_igv_1, out_name_igv_2, out_name_html) # Create output file 
+				makeHTML(out_name_html)
 
 
 		else: 
@@ -142,15 +143,18 @@ def rank_sites (kar, links, sup_links):
 				score_suplink += int((sup_link_df['chrom2'] == site).sum())
 				#print (site, score_softlink, score_suplink)		
 
-				total_score = score_softlink * 2
+				total_score = score_softlink * 10
 				total_score += score_suplink
 				karyo_df.loc[i, 'score'] = total_score
 
+			print(karyo_df)
+
 			# sort dataframe based on score 
-			karyo_df.sort_values(by = ['score'])
+			karyo_df = karyo_df.sort_values(by = ['score'], ascending=False)
+			#print(karyo_df)
 			# remove score row 
 			karyo_sorted = karyo_df.drop(columns= 'score')
-			#print (karyo_sorted)
+			print (karyo_sorted)
 
 			for i in range(len(karyo_sorted)):
 				# create karyotype files for plotting
@@ -172,9 +176,10 @@ def rank_sites (kar, links, sup_links):
 				igv_position_1 = '{}:{}-{}'.format(R_karyo[0], int(R_karyo[1])+4950, int(R_karyo[2])-4950) # long region
 				igv_position_2 = '{}:{}-{}'.format(R_karyo[0], int(R_karyo[1])+4600, int(R_karyo[2])-4600) # short region (4600 orig)
 
-				html_host_bp = '{} - {}'.format(R_karyo[1], R_karyo[2])
-				
-				const_bp1, const_bp2 = find_construct_bp(links, R_karyo[0], int(R_karyo[1])+5000, int(R_karyo[2])-5000)
+				html_host_bp = '{} - {}'.format(R_karyo[1]+5001, R_karyo[2]-5000)
+
+				# Find construct break point				
+				const_bp1, const_bp2 = find_construct_bp(links, R_karyo[0], int(R_karyo[1])+5001, int(R_karyo[2])-5000)
 				html_cons_bp = '{} - {}'.format(const_bp1, const_bp2) # bp position to be reported
 				#html_cons_bp = '{} - {}'.format(R_karyo_construct[1], R_karyo_construct[2])
 
@@ -185,14 +190,16 @@ def rank_sites (kar, links, sup_links):
 				
 				makePlot_R(out_name_R) # circlize plot
 
-				makePlot_igv(igv_position_1, out_name_igv_1) # igv plot
-				makePlot_igv(igv_position_2, out_name_igv_2) # zoomed igv plot
+				#makePlot_igv(igv_position_1, out_name_igv_1) # igv plot
+				#makePlot_igv(igv_position_2, out_name_igv_2) # zoomed igv plot
 
 				print('igv plot are finished!')
 				print('\n')
 				print('Create output files')
 
-				makeHTML_output(R_karyo[0], html_host_bp, R_karyo_construct[0], html_cons_bp, out_name_R, out_name_igv_1, out_name_igv_2, out_name_html) # Create output file 
+				makeHTML_pre(R_karyo[0], html_host_bp, R_karyo_construct[0], html_cons_bp, out_name_R, out_name_igv_1, out_name_igv_2, out_name_html, str(i+1)) # Create output file 
+
+	makeHTML('TC_hunter_report.html')
 
 			#print (karyo_df)	
 			#print (link_df)
@@ -242,23 +249,58 @@ def makePlot_igv (position, out_name):
 
 ########################################### Create html output ###########################################
 
-def makeHTML_output (host_chr, host_bp, cons_chr, cons_bp, circ_name, igv1_name, igv2_name, html_name):
+def makeHTML_pre (host_chr, host_bp, cons_chr, cons_bp, circ_name, igv1_name, igv2_name, html_name, rank_n):
 	#subprocess.call ('cp ' + os.path.join(TC,"template/output.html") + ' ' + WD, shell=True)
 	#subprocess.call ('mv ' + WD + '/output.html ' + WD + '/' + html_name, shell=True)
-	output_file = '{}/{}'.format(WD, html_name)
-	with open(os.path.join(TC,"template/output.html"), 'r') as myfile:
-		template=myfile.read()
 
-		template= template.replace("£££££", "{}\t{}".format(host_chr, host_bp)) # host bp position
-		template= template.replace("ˇˇˇˇˇ", "{}\t{}".format(cons_chr, cons_bp)) # construct bp position
+	subprocess.call ('echo "<hr size=4 align=left color=darkgrey>" >> ranking.txt', shell=True)
+	subprocess.call ('echo "<h1>' + rank_n + ' </h1>" >> ranking.txt', shell=True)
+	
+	subprocess.call ('echo "<hr size=4 align=left color=darkgrey>" >> bp_position.txt', shell=True)	
+	subprocess.call ('echo "<h1>' + host_chr + ' ' + host_bp + '</h1>" >> bp_position.txt', shell=True)
 
-		template= template.replace("ªªªªª", circ_name) # Circlize.png
-		template= template.replace("ßßßßß", igv1_name) # igv.png
-		template= template.replace("®®®®®", igv2_name) # igv_zoom.png
+	subprocess.call ('echo "<hr size=4 align=left color=darkgrey>" >> figures.txt', shell=True)
+	subprocess.call ('echo "<a href=' + circ_name + '><img src=' + circ_name + ' title="Circlize figure" width=40 height=40 /></a> &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;" >> figures.txt', shell=True)
+	subprocess.call ('echo "<a href=' + igv1_name + '><img src=' + igv1_name + ' title="IGV figure" width=40 height=40 /></a> &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;" >> figures.txt', shell=True)
+	subprocess.call ('echo "<a href=' + igv2_name + '><img src=' + igv2_name + ' title="IGV figure" width=40 height=40 /></a> &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;" >> figures.txt', shell=True)
 
-		f= open(output_file, "w")
-		f.write(template)
-		f.close()
+
+def makeHTML (name):
+	output_file = '{}/{}'.format(WD, name) 
+	template1 = '{}/{}'.format(TC, "template/out_part1.txt")
+	template2 = '{}/{}'.format(TC, "template/out_part2.txt")
+
+	subprocess.call ('cat ' + template1 + ' > ' + output_file, shell=True)
+	subprocess.call ('cat ranking.txt >> ' + output_file, shell=True)
+	subprocess.call ('echo "</nav>" >> ' + output_file, shell=True)
+	subprocess.call ('echo "<article>" >> ' + output_file, shell=True)
+	subprocess.call ('echo "<h2>Predicted breakpoint position in host genome </h2>" >> ' + output_file, shell=True)
+	subprocess.call ('cat bp_position.txt >> ' + output_file, shell=True)
+	subprocess.call ('echo "</article>" >> ' + output_file, shell=True)
+	subprocess.call ('echo "<figures>" >> ' + output_file, shell=True)
+	subprocess.call ('echo "<h2>figures</h2>" >> ' + output_file, shell=True)
+	subprocess.call ('cat figures.txt >> ' + output_file, shell=True)
+	subprocess.call ('echo "</figures>" >> ' + output_file, shell=True)
+	subprocess.call ('cat ' + template2 + ' >> ' + output_file, shell=True)
+
+	subprocess.call ('rm ranking.txt', shell=True)
+	subprocess.call ('rm bp_position.txt', shell=True)
+	subprocess.call ('rm figures.txt', shell=True)
+
+#	output_file = '{}/{}'.format(WD, html_name)
+#	with open(os.path.join(TC,"template/output.html"), 'r') as myfile:
+#		template=myfile.read()#
+
+#		template= template.replace("£££££", "{}\t{}".format(host_chr, host_bp)) # host bp position
+#		template= template.replace("ˇˇˇˇˇ", "{}\t{}".format(cons_chr, cons_bp)) # construct bp position#
+
+#		template= template.replace("ªªªªª", circ_name) # Circlize.png
+#		template= template.replace("ßßßßß", igv1_name) # igv.png
+#		template= template.replace("®®®®®", igv2_name) # igv_zoom.png#
+
+#		f= open(output_file, "w")
+#		f.write(template)
+#		f.close()
 
 # What we need for output HTML; template path WD/Template/TC_hunter_out.html
 # 1) rank number 2) bp position 3) plot_nams * 2
@@ -278,24 +320,32 @@ def find_construct_bp (links, host_chr, host_bp1, host_bp2):
 			print(line)
 			print(str(host_chr), str(host_bp1), str(host_bp2))
 
+			# Check construct bp that matches the host bp
 			if (line[0] == host_chr and str(line[1]) == str(host_bp1)):
 				print('hej')
 				construct_bp1.append(line[4])
 				print(construct_bp1)
 
-			elif line[3] == host_chr and str(line[4]) == str(host_bp1):	
+			if line[3] == host_chr and str(line[4]) == str(host_bp1):	
+				print('new')
 				construct_bp1.append(line[1])
 
-			elif line[0] == host_chr and str(line[1]) == str(host_bp2):
+			if line[0] == host_chr and str(line[1]) == str(host_bp2):
+				print('bp2')
 				construct_bp2.append(line[4])
 
-			elif line[3] == host_chr and str(line[4]) == str(host_bp2):
+			if line[3] == host_chr and str(line[4]) == str(host_bp2):
+				print('bp4')
 				construct_bp2.append(line[1])
 	
 			#print(max(set(numbers), key=numbers.count))	
-
+		print(construct_bp1, construct_bp2)	
 		#print(construct_bp1)
-		bp_1 = most_frequent(construct_bp1)
+		if len(construct_bp1)==0:
+			bp_1 = 'Unknown'
+
+		elif len(construct_bp1)!=0:	
+			bp_1 = most_frequent(construct_bp1)
 		#print(construct_bp2)
 		bp_2 = most_frequent(construct_bp2)
 

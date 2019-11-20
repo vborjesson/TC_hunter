@@ -20,7 +20,7 @@ process bwa_mem {
 	module 'bwa/0.7.5a:samtools/0.1.19'
 
 	output:
-		file "BWA_sorted.bam" into bwa_mem_out	
+		file "BWA_sorted.bam.bam" into bwa_mem_out	
 		file "JointRefGenome.fasta" into bwa_mem_out_ref
 
 	script:
@@ -30,8 +30,8 @@ process bwa_mem {
 		cat ${params.construct_ref} >> JointRefGenome.fasta
 		bwa index JointRefGenome.fasta
 		bwa mem JointRefGenome.fasta ${params.fastq1} ${params.fastq2} | samtools view -Sb - >  bwa_mem.bam	
-		samtools sort bwa_mem.bam BWA_sorted
-		samtools index BWA_sorted.bam.bam	
+		samtools sort bwa_mem.bam BWA_sorted.bam
+		samtools index BWA_sorted.bam	
 	
 	"""	
 	
@@ -198,7 +198,7 @@ process create_plots {
 		file jointRef from bwa_mem_out_ref
 
 	output:
-		file 'circlize.pdf' into circos_out 
+		file 'circlize.pdf' into circos_out  
 
 	script:
 	"""
