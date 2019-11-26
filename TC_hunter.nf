@@ -151,8 +151,8 @@ process create_plots {
 		file 'hist.txt' from hist_out 
 		file "sup_links.txt" from sup_links
 
-//	output:
-//		file 'circlize.pdf' into circos_out 
+	output:
+		file '*.pdf' into circos_out 
 
 	script:
 	"""

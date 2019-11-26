@@ -2,8 +2,13 @@
 
 ## TC-hunter identifies transgenic insertion sites within host genome
 
-Takes a sorted and indexed bam file mapped to host genome and construct together as input, and output a plot and txt-file with possible breakpoints of insertion sites. 
-The blue links correspond to reads with supplementary aligned reads in construct, and the gray links are soft clipped reads (one part of the read map to construct and the other to construct).  
+TC-hunter searches for transgenic insertion sites in a host genome and returns figures and a report to support these findings. 
+
+Theres two programs; TC_hunter and TC_hunter_BWA. 
+
+## TC_hunter
+Accepts an aligned BAM file (mapped to both host and transgenic sequence) as input. 
+TC-hunter then identifies anchors and chimeric reads that maps to both host and transgenig sequence.         
 
 
 ## Install 

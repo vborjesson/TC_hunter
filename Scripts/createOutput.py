@@ -164,9 +164,9 @@ def rank_sites (kar, links, sup_links):
 				R_karyo_string_construct = '{} {} {}'.format(R_karyo_construct[0], R_karyo_construct[1], R_karyo_construct[2]) 
 
 				# Make file
-				subprocess.call('echo chr start end > ' + WD + '/tmp_karyotype.txt', shell = True)
-				subprocess.call('echo ' + R_karyo_string + ' >> ' + WD + '/tmp_karyotype.txt', shell = True)  
-				subprocess.call('echo ' + R_karyo_string_construct + ' >> ' + WD + '/tmp_karyotype.txt', shell = True)
+				subprocess.call('echo chr start end > tmp_karyotype.txt', shell = True)
+				subprocess.call('echo ' + R_karyo_string + ' >> tmp_karyotype.txt', shell = True)  
+				subprocess.call('echo ' + R_karyo_string_construct + ' >> tmp_karyotype.txt', shell = True)
 
 				# make position string for biomart gene annotation
 				biomart_karyo_string = '{}:{}:{}'.format(R_karyo[0], R_karyo[1], R_karyo[2]) 
