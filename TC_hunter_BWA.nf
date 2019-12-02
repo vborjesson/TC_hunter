@@ -20,7 +20,7 @@ process bwa_mem {
 	module 'bwa/0.7.5a:samtools/0.1.19'
 
 	output:
-		file "BWA_sorted.bam.bam" into bwa_mem_out	
+		file "BWA_sorted.bam.bam", "BWA_sorted.bam.bam.bai" into bwa_mem_out	
 		file "JointRefGenome.fasta" into bwa_mem_out_ref
 
 	script:
@@ -56,7 +56,7 @@ process extract_reads_bwa {
 	module 'samtools/1.9'
 
 	input:
-		file bam from bwa_mem_out_extractReads
+		file bam, bai from bwa_mem_out_extractReads
 
 	output:
 		file "softclipped.sam" into softclipped_out	
@@ -88,7 +88,7 @@ process create_links_sup {
 	module 'samtools/1.9'
 
 	input:
-		file bam from bwa_mem_out_links
+		file bam, bai from bwa_mem_out_links
 
 	output:
 		file "sup_links.txt" into sup_links	
@@ -166,7 +166,7 @@ process create_histogram {
 
 	input:
 		file karyo_file from karyotype_out_hist
-		file bam from bwa_mem_out_hist		
+		file bam, bai from bwa_mem_out_hist		
 
 	output:
 		file 'hist.txt' into hist_out	
@@ -194,7 +194,7 @@ process create_plots {
 		file 'karyotype.txt' from karyotype_out_circos
 		file 'hist.txt' from hist_out 
 		file "sup_links.txt" from sup_links
-		file bam from bwa_mem_out_plots
+		file bam, bai from bwa_mem_out_plots
 		file jointRef from bwa_mem_out_ref
 
 	output:

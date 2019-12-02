@@ -76,9 +76,9 @@ def rank_sites (kar, links, sup_links):
 			first_line = True
 			with open (kar, 'r') as f_in:
 				for line in f_in:
-					print (line)
+					#print (line)
 					if first_line:
-						print ('first line', line)
+						#print ('first line', line)
 
 						R_karyo = line.split(' ')
 
@@ -97,7 +97,7 @@ def rank_sites (kar, links, sup_links):
 
 						R_karyo_construct = line.split(' ')
 
-						const_bp1, const_bp2 = find_construct_bp(links, R_karyo[0], int(R_karyo[1])+5000+1, int(R_karyo[2])-5000)
+						const_bp1, const_bp2 = find_construct_bp(links, R_karyo[0], int(R_karyo[1])+5000, int(R_karyo[2])-5000)
 						html_cons_bp = '{} - {}'.format(const_bp1, const_bp2) # bp position to be reported
 							
 
@@ -107,9 +107,9 @@ def rank_sites (kar, links, sup_links):
 				out_name_igv_2 = str ('igv.png')
 				out_name_html = str('best_output.html')
 				makePlot_R(out_name_R)
-				#makePlot_igv(igv_position_1, out_name_igv_1)
-				#makePlot_igv(igv_position_2, out_name_igv_2)
-				makeHTML_pre(R_karyo[0], html_host_bp, R_karyo_construct[0], html_cons_bp, out_name_R, out_name_igv_1, out_name_igv_2, out_name_html) # Create output file 
+				makePlot_igv(igv_position_1, out_name_igv_1)
+				makePlot_igv(igv_position_2, out_name_igv_2)
+				makeHTML_pre(R_karyo[0], html_host_bp, R_karyo_construct[0], html_cons_bp, out_name_R, out_name_igv_1, out_name_igv_2, out_name_html, '1') # Create output file 
 				makeHTML(out_name_html)
 
 
@@ -147,7 +147,7 @@ def rank_sites (kar, links, sup_links):
 				total_score += score_suplink
 				karyo_df.loc[i, 'score'] = total_score
 
-			print(karyo_df)
+			#print(karyo_df)
 
 			# sort dataframe based on score 
 			karyo_df = karyo_df.sort_values(by = ['score'], ascending=False)
@@ -179,7 +179,7 @@ def rank_sites (kar, links, sup_links):
 				html_host_bp = '{} - {}'.format(R_karyo[1]+5001, R_karyo[2]-5000)
 
 				# Find construct break point				
-				const_bp1, const_bp2 = find_construct_bp(links, R_karyo[0], int(R_karyo[1])+5001, int(R_karyo[2])-5000)
+				const_bp1, const_bp2 = find_construct_bp(links, R_karyo[0], int(R_karyo[1])+5000, int(R_karyo[2])-5000)
 				html_cons_bp = '{} - {}'.format(const_bp1, const_bp2) # bp position to be reported
 				#html_cons_bp = '{} - {}'.format(R_karyo_construct[1], R_karyo_construct[2])
 
@@ -190,8 +190,8 @@ def rank_sites (kar, links, sup_links):
 				
 				makePlot_R(out_name_R) # circlize plot
 
-				#makePlot_igv(igv_position_1, out_name_igv_1) # igv plot
-				#makePlot_igv(igv_position_2, out_name_igv_2) # zoomed igv plot
+				makePlot_igv(igv_position_1, out_name_igv_1) # igv plot
+				makePlot_igv(igv_position_2, out_name_igv_2) # zoomed igv plot
 
 				print('igv plot are finished!')
 				print('\n')
@@ -250,19 +250,17 @@ def makePlot_igv (position, out_name):
 ########################################### Create html output ###########################################
 
 def makeHTML_pre (host_chr, host_bp, cons_chr, cons_bp, circ_name, igv1_name, igv2_name, html_name, rank_n):
-	#subprocess.call ('cp ' + os.path.join(TC,"template/output.html") + ' ' + WD, shell=True)
-	#subprocess.call ('mv ' + WD + '/output.html ' + WD + '/' + html_name, shell=True)
 
-	subprocess.call ('echo "<hr size=4 align=left color=darkgrey>" >> ranking.txt', shell=True)
-	subprocess.call ('echo "<h1>' + rank_n + ' </h1>" >> ranking.txt', shell=True)
-	
-	subprocess.call ('echo "<hr size=4 align=left color=darkgrey>" >> bp_position.txt', shell=True)	
-	subprocess.call ('echo "<h1>' + host_chr + ' ' + host_bp + '</h1>" >> bp_position.txt', shell=True)
-
-	subprocess.call ('echo "<hr size=4 align=left color=darkgrey>" >> figures.txt', shell=True)
-	subprocess.call ('echo "<a href=' + circ_name + '><img src=' + circ_name + ' title="Circlize figure" width=40 height=40 /></a> &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;" >> figures.txt', shell=True)
-	subprocess.call ('echo "<a href=' + igv1_name + '><img src=' + igv1_name + ' title="IGV figure" width=40 height=40 /></a> &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;" >> figures.txt', shell=True)
-	subprocess.call ('echo "<a href=' + igv2_name + '><img src=' + igv2_name + ' title="IGV figure" width=40 height=40 /></a> &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;" >> figures.txt', shell=True)
+	subprocess.call ('echo "<tr>" >> out_middle.txt', shell=True)
+	subprocess.call ('echo "<th scope=col></th>" >> out_middle.txt', shell=True)
+	subprocess.call ('echo "<th scope=row>' + rank_n + '</th>" >> out_middle.txt', shell=True)
+	subprocess.call ('echo "<td>' + host_chr + ' ' + host_bp + '</td>" >> out_middle.txt', shell=True)
+	subprocess.call ('echo "<td>' + cons_chr + ' ' + cons_bp + '</td>" >> out_middle.txt', shell=True)
+	subprocess.call ('echo "<td><a href=' + circ_name + '><img src=' + circ_name + 'title='' width=40 height=40 /></a> &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;" >> out_middle.txt', shell=True)
+	subprocess.call ('echo "<td><a href=' + igv1_name + '><img src=' + igv1_name + 'title='' width=40 height=40 /></a> &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;" >> out_middle.txt', shell=True)
+	subprocess.call ('echo "<td><a href=' + igv2_name + '><img src=' + igv2_name + 'title='' width=40 height=40 /></a>" >> out_middle.txt', shell=True)
+	subprocess.call ('echo "</td>" >> out_middle.txt', shell=True)
+	subprocess.call ('echo "</tr>" >> out_middle.txt', shell=True)
 
 
 def makeHTML (name):
@@ -271,21 +269,11 @@ def makeHTML (name):
 	template2 = '{}/{}'.format(TC, "template/out_part2.txt")
 
 	subprocess.call ('cat ' + template1 + ' > ' + output_file, shell=True)
-	subprocess.call ('cat ranking.txt >> ' + output_file, shell=True)
-	subprocess.call ('echo "</nav>" >> ' + output_file, shell=True)
-	subprocess.call ('echo "<article>" >> ' + output_file, shell=True)
-	subprocess.call ('echo "<h2>Predicted breakpoint position in host genome </h2>" >> ' + output_file, shell=True)
-	subprocess.call ('cat bp_position.txt >> ' + output_file, shell=True)
-	subprocess.call ('echo "</article>" >> ' + output_file, shell=True)
-	subprocess.call ('echo "<figures>" >> ' + output_file, shell=True)
-	subprocess.call ('echo "<h2>figures</h2>" >> ' + output_file, shell=True)
-	subprocess.call ('cat figures.txt >> ' + output_file, shell=True)
-	subprocess.call ('echo "</figures>" >> ' + output_file, shell=True)
+	subprocess.call ('cat out_middle.txt >> ' + output_file, shell=True)
 	subprocess.call ('cat ' + template2 + ' >> ' + output_file, shell=True)
 
-	subprocess.call ('rm ranking.txt', shell=True)
-	subprocess.call ('rm bp_position.txt', shell=True)
-	subprocess.call ('rm figures.txt', shell=True)
+	subprocess.call ('rm out_middle.txt', shell=True)
+
 
 #	output_file = '{}/{}'.format(WD, html_name)
 #	with open(os.path.join(TC,"template/output.html"), 'r') as myfile:
@@ -317,25 +305,20 @@ def find_construct_bp (links, host_chr, host_bp1, host_bp2):
 		for line in links_in:
 			line = line.split(' ')
 
-			print(line)
-			print(str(host_chr), str(host_bp1), str(host_bp2))
+			#print(line)
+			#print(str(host_chr), str(host_bp1), str(host_bp2))
 
 			# Check construct bp that matches the host bp
 			if (line[0] == host_chr and str(line[1]) == str(host_bp1)):
-				print('hej')
 				construct_bp1.append(line[4])
-				print(construct_bp1)
 
 			if line[3] == host_chr and str(line[4]) == str(host_bp1):	
-				print('new')
 				construct_bp1.append(line[1])
 
 			if line[0] == host_chr and str(line[1]) == str(host_bp2):
-				print('bp2')
 				construct_bp2.append(line[4])
 
 			if line[3] == host_chr and str(line[4]) == str(host_bp2):
-				print('bp4')
 				construct_bp2.append(line[1])
 	
 			#print(max(set(numbers), key=numbers.count))	
@@ -344,10 +327,16 @@ def find_construct_bp (links, host_chr, host_bp1, host_bp2):
 		if len(construct_bp1)==0:
 			bp_1 = 'Unknown'
 
-		elif len(construct_bp1)!=0:	
+		if len(construct_bp1)!=0:	
 			bp_1 = most_frequent(construct_bp1)
-		#print(construct_bp2)
-		bp_2 = most_frequent(construct_bp2)
+		
+		# If host basepairs is the same look for the second most common:
+		if host_bp1 == host_bp2:
+			construct_bp2[:] = (value for value in construct_bp2 if value != bp_1)
+			bp_2 = most_frequent(construct_bp2)
+
+		if host_bp1 != host_bp2:
+			bp_2 = most_frequent(construct_bp2)
 
 	return (bp_1, bp_2)
 
