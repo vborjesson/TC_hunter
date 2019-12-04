@@ -46,6 +46,7 @@ parser.add_argument('--WorkDir', dest='WD', help = 'WorkingDir', required=True)
 parser.add_argument('--tchunter', dest='TC', help = 'Path to TC_hunter', required=True)
 parser.add_argument('--bam', dest='bam', help = 'path to bam file', required=True)
 parser.add_argument('--ref', dest='ref', help = 'reference fasta file for host', required=True)
+parser.add_argument('--name', dest='name', help = 'sample name', required=True)
 
 args = parser.parse_args()
 
@@ -58,6 +59,7 @@ WD = args.WD
 TC = args.TC
 bam = args.bam
 ref = args.ref
+sample_id = args.name
 
 ########################################### ranking function ###########################################
 
@@ -85,10 +87,9 @@ def rank_sites (kar, links, sup_links):
 						#print(line[0], line[1], line[2])
 						
 						biomart_string = '{}:{}:{}'.format(R_karyo[0], R_karyo[1], R_karyo[2]) # string with pos to search for genes 
-						igv_position_1 = '{}:{}-{}'.format(R_karyo[0], int(R_karyo[1])+4900, int(R_karyo[2])-4900) # igv span
-						igv_position_2 = '{}:{}-{}'.format(R_karyo[0], int(R_karyo[1])+4600, int(R_karyo[2])-4600) # igv span zoomed
+						igv_position_1 = '{}:{}-{}'.format(R_karyo[0], int(R_karyo[1])+4980, int(R_karyo[2])-4980) # igv span
 
-						html_host_bp = '{} - {}'.format(int(R_karyo[1])+5000+1, int(R_karyo[2])-5000) # bp position to be reported
+						html_host_bp = '{} - {}'.format(int(R_karyo[1])+5000, int(R_karyo[2])-5000-1) # bp position to be reported
 						
 						first_line = False
 						continue
@@ -99,18 +100,20 @@ def rank_sites (kar, links, sup_links):
 
 						const_bp1, const_bp2 = find_construct_bp(links, R_karyo[0], int(R_karyo[1])+5000, int(R_karyo[2])-5000)
 						html_cons_bp = '{} - {}'.format(const_bp1, const_bp2) # bp position to be reported
-							
+						igv_position_2 = '{}:{}-{}'.format(R_karyo[0], const_bp1, const_bp2) # igv span zoomed
+
+				score_tot = 'comming soon'			
 
 				Gene_annotation_R(biomart_string)
-				out_name_R = str('circlize.pdf')
-				out_name_igv_1 = str ('igv_zoom.png')
-				out_name_igv_2 = str ('igv.png')
-				out_name_html = str('best_output.html')
-				makePlot_R(out_name_R)
-				makePlot_igv(igv_position_1, out_name_igv_1)
-				makePlot_igv(igv_position_2, out_name_igv_2)
-				makeHTML_pre(R_karyo[0], html_host_bp, R_karyo_construct[0], html_cons_bp, out_name_R, out_name_igv_1, out_name_igv_2, out_name_html, '1') # Create output file 
-				makeHTML(out_name_html)
+				out_name_R = '{}{}'.format(sample_id, str('_circlize.pdf'))
+				out_name_igv_1 = '{}{}'.format(sample_id, str('_igv_host.png'))
+				out_name_igv_2 = '{}{}'.format(sample_id, str('_igv_construct.png'))
+				out_name_html = '{}{}'.format(sample_id, str('_output.html'))
+				makePlot_R(out_name_R, sample_id)
+				makePlot_igv_pre(igv_position_1, out_name_igv_1, sample_id)
+				makePlot_igv_pre(igv_position_2, out_name_igv_2, sample_id)
+				makeHTML_pre(R_karyo[0], html_host_bp, R_karyo_construct[0], html_cons_bp, out_name_R, out_name_igv_1, out_name_igv_2, out_name_html, '1', score_tot) # Create output file 
+				#makeHTML(out_name_html)
 
 
 		else: 
@@ -157,6 +160,8 @@ def rank_sites (kar, links, sup_links):
 			print (karyo_sorted)
 
 			for i in range(len(karyo_sorted)):
+
+				score_tot = karyo_df['score'].iloc[i]
 				# create karyotype files for plotting
 				R_karyo_construct = construct_df.iloc[0]
 				R_karyo = karyo_sorted.iloc[i, :]
@@ -183,23 +188,24 @@ def rank_sites (kar, links, sup_links):
 				html_cons_bp = '{} - {}'.format(const_bp1, const_bp2) # bp position to be reported
 				#html_cons_bp = '{} - {}'.format(R_karyo_construct[1], R_karyo_construct[2])
 
-				out_name_R = '{}{}'.format((i+1),'_circlize.pdf') 
-				out_name_igv_1 = '{}{}'.format((i+1),'_igv_zoom.png') 
-				out_name_igv_2 = '{}{}'.format((i+1),'_igv.png') 
-				out_name_html = '{}{}'.format((i+1),'_output.html')
+				out_name_R = '{}_{}{}'.format((i+1), sample_id, '_circlize.pdf') 
+				out_name_igv_1 = '{}_{}{}'.format((i+1), sample_id, '_igv_host.png') 
+				out_name_igv_2 = '{}_{}{}'.format((i+1), sample_id, '_igv_construct.png') 
+				out_name_html = '{}_{}{}'.format((i+1), sample_id, '_output.html')
 				
-				makePlot_R(out_name_R) # circlize plot
+				makePlot_R(out_name_R, sample_id) # circlize plot
 
-				makePlot_igv(igv_position_1, out_name_igv_1) # igv plot
-				makePlot_igv(igv_position_2, out_name_igv_2) # zoomed igv plot
+				makePlot_igv_pre(igv_position_1, out_name_igv_1, sample_id) # igv host
+				makePlot_igv_pre(igv_position_2, out_name_igv_2, sample_id) # igv construct
 
 				print('igv plot are finished!')
 				print('\n')
 				print('Create output files')
 
-				makeHTML_pre(R_karyo[0], html_host_bp, R_karyo_construct[0], html_cons_bp, out_name_R, out_name_igv_1, out_name_igv_2, out_name_html, str(i+1)) # Create output file 
+				makeHTML_pre(R_karyo[0], html_host_bp, R_karyo_construct[0], html_cons_bp, out_name_R, out_name_igv_1, out_name_igv_2, out_name_html, str(i+1), score_tot) # Create output file 
 
-	makeHTML('TC_hunter_report.html')
+	makePlot_igv(sample_id)			
+	makeHTML(out_name_html)
 
 			#print (karyo_df)	
 			#print (link_df)
@@ -217,43 +223,57 @@ def Gene_annotation_R (position):
 
 
 ########################################### Plot function ###########################################
-def makePlot_R (out_name):
-	print('Rscript ' + TC + '/Scripts/circlize.R ', out_name + ' ' + construct)
-	subprocess.call('Rscript ' + TC + '/Scripts/circlize.R ' + out_name + ' ' + construct, shell = True)
+def makePlot_R (out_name, sample_id):
+	print('Rscript ' + TC + '/Scripts/circlize.R ', out_name + ' ' + construct + ' ' + sample_id)
+	subprocess.call('Rscript ' + TC + '/Scripts/circlize.R ' + out_name + ' ' + construct + ' ' + sample_id, shell = True)
 
 
 #def makePlot_python ():	
 
-########################################### IGV function ###########################################
+########################################### IGV-pre function ###########################################
 
-def makePlot_igv (position, out_name):
+def makePlot_igv_pre (position, out_name, sample_id):
+
+	igv_out = '/{}{}'.format(sample_id, '_igv.bat')
 
 	# Create batch file to use as input in igv 
-	subprocess.call ('echo new > ' + WD + '/igv.bat', shell = True)
-	subprocess.call ('echo load ' + bam + ' >> ' + WD + '/igv.bat', shell= True)
-	subprocess.call ('echo snapshotDirectory ' + WD +  ' >> ' + WD + '/igv.bat', shell = True)
-	subprocess.call ('echo genome ' + ref +  ' >> ' + WD + '/igv.bat', shell = True)
-	subprocess.call ('echo goto ' + position +  ' >> ' + WD + '/igv.bat', shell = True)
-	subprocess.call ('echo sort base >> ' + WD + '/igv.bat', shell = True)
-	subprocess.call ('echo collapse  >> ' + WD + '/igv.bat', shell = True)
-	subprocess.call ('echo snapshot ' + out_name + ' >> ' + WD + '/igv.bat', shell = True)	
-	subprocess.call ('echo exit >> ' + WD + '/igv.bat', shell = True)
+	subprocess.call ('echo new >> ' + WD + igv_out, shell = True)
+	subprocess.call ('echo load ' + bam + ' >> ' + WD + igv_out, shell= True)
+	subprocess.call ('echo snapshotDirectory ' + WD +  ' >> ' + WD + igv_out, shell = True)
+	subprocess.call ('echo genome ' + ref +  ' >> ' + WD + igv_out, shell = True)
+	subprocess.call ('echo goto ' + position +  ' >> ' + WD + igv_out, shell = True)
+	subprocess.call ('echo sort base >> ' + WD + igv_out, shell = True)
+	subprocess.call ('echo collapse  >> ' + WD + igv_out, shell = True)
+	subprocess.call ('echo snapshot ' + out_name + ' >> ' + WD + igv_out, shell = True)	
+
+
+
+########################################### IGV function ###########################################
+
+# Finishing the igv batch file 
+def makePlot_igv (sample_id):
+
+	igv_out = '/{}{}'.format(sample_id, '_igv.bat')
+	subprocess.call ('echo exit >> ' + WD + igv_out, shell = True)
 
 	print('igv.bat file is done!')
-	print('igv.sh -b ' + WD + '/igv.bat')
+	print('type: igv.sh -b ' + WD + igv_out)
 
 	#subprocess.call ('igv.sh -b ' + WD + '/igv.bat', shell = True)
 
-	subprocess.call ('igv.sh -b ' + WD + '/igv.bat', shell = True)
+	subprocess.call ('igv.sh -b ' + WD + igv_out, shell = True)
+
 
 
 ########################################### Create html output ###########################################
 
-def makeHTML_pre (host_chr, host_bp, cons_chr, cons_bp, circ_name, igv1_name, igv2_name, html_name, rank_n):
+def makeHTML_pre (host_chr, host_bp, cons_chr, cons_bp, circ_name, igv1_name, igv2_name, html_name, rank_n, score):
 
+	print('creating HTML tables..')
 	subprocess.call ('echo "<tr>" >> out_middle.txt', shell=True)
 	subprocess.call ('echo "<th scope=col></th>" >> out_middle.txt', shell=True)
 	subprocess.call ('echo "<th scope=row>' + rank_n + '</th>" >> out_middle.txt', shell=True)
+	subprocess.call ('echo "<td>' + score + '</td>" >> out_middle.txt', shell=True)
 	subprocess.call ('echo "<td>' + host_chr + ' ' + host_bp + '</td>" >> out_middle.txt', shell=True)
 	subprocess.call ('echo "<td>' + cons_chr + ' ' + cons_bp + '</td>" >> out_middle.txt', shell=True)
 	subprocess.call ('echo "<td><a href=' + circ_name + '><img src=' + circ_name + 'title='' width=40 height=40 /></a> &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;" >> out_middle.txt', shell=True)
@@ -274,24 +294,6 @@ def makeHTML (name):
 
 	subprocess.call ('rm out_middle.txt', shell=True)
 
-
-#	output_file = '{}/{}'.format(WD, html_name)
-#	with open(os.path.join(TC,"template/output.html"), 'r') as myfile:
-#		template=myfile.read()#
-
-#		template= template.replace("£££££", "{}\t{}".format(host_chr, host_bp)) # host bp position
-#		template= template.replace("ˇˇˇˇˇ", "{}\t{}".format(cons_chr, cons_bp)) # construct bp position#
-
-#		template= template.replace("ªªªªª", circ_name) # Circlize.png
-#		template= template.replace("ßßßßß", igv1_name) # igv.png
-#		template= template.replace("®®®®®", igv2_name) # igv_zoom.png#
-
-#		f= open(output_file, "w")
-#		f.write(template)
-#		f.close()
-
-# What we need for output HTML; template path WD/Template/TC_hunter_out.html
-# 1) rank number 2) bp position 3) plot_nams * 2
 
 
 ########################################### Find construct bp ###########################################

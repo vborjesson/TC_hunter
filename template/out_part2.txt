@@ -1,15 +1,4 @@
   </tbody>
 </table>
 
-</body>
-</html>
-
-
-
-</body>
-
-<footer>
-  <p>TC-hunter v.0.0 &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; Contact information: https://github.com/vborjesson/TC_hunter</p>
-
-</footer>
 

@@ -3,10 +3,27 @@
 workingdirectory = params.workingDir
 construct_file = file(params.construct_file)
 
-//sequences = Channel
-//                .fromPath(params.bam)
-//                .map { file -> tuple(file.baseName, file) }
+params.folder = ""
+params.sample = ""
 
+// Channel all samples from folder in order to parallelize longranger
+// Each sample is set into a tuple with ID and path (This will be the input in the longranger process)
+if (params.folder) {
+	String character = "/*";
+	String folder_path = params.folder;
+	sample_path =folder_path+character;
+	fastq_path = Channel.fromPath(sample_path, type: 'dir').map {path -> tuple(path.name, path)}
+}
+
+// If just one sample; no channels are needed
+// The sample is set into a tuple with ID and path (This will be the input for the longranger process)
+if (params.sample) {
+	String character = "/*";
+	String folder_path = params.sample;
+	sample_path =folder_path;
+	//System.out.println(otherString);
+	fastq_path = Channel.fromPath(sample_path, type: 'dir').map {path -> tuple(path.name, path)}
+}
 
 
 
@@ -19,8 +36,11 @@ process bwa_mem {
 
 	module 'bwa/0.7.5a:samtools/0.1.19'
 
+	input:
+		set ID, path from fastq_path 
+
 	output:
-		file "BWA_sorted.bam.bam", "BWA_sorted.bam.bam.bai" into bwa_mem_out	
+		set ID, "${ID}_sorted.bam", "${ID}_sorted.bam.bai" into bwa_mem_out	
 		file "JointRefGenome.fasta" into bwa_mem_out_ref
 
 	script:
@@ -29,9 +49,9 @@ process bwa_mem {
 		cat ${params.host_reference} > JointRefGenome.fasta
 		cat ${params.construct_ref} >> JointRefGenome.fasta
 		bwa index JointRefGenome.fasta
-		bwa mem -t 8 JointRefGenome.fasta ${params.fastq1} ${params.fastq2} | samtools view -Sb - >  bwa_mem.bam	
-		samtools sort bwa_mem.bam BWA_sorted.bam
-		samtools index BWA_sorted.bam.bam 	
+		bwa mem -t 8 JointRefGenome.fasta ${path}/*R2* ${path}/*R2* | samtools view -Sb - >  ${ID}.bam	
+		samtools sort ${ID}.bam ${ID}_sorted
+		samtools index ${ID}_sorted.bam	
 	
 	"""	
 	
@@ -56,23 +76,23 @@ process extract_reads_bwa {
 	module 'samtools/1.9'
 
 	input:
-		file bam, bai from bwa_mem_out_extractReads
+		set ID, bam, bai from bwa_mem_out_extractReads
 
 	output:
-		file "softclipped.sam" into softclipped_out	
+		set ID, "${ID}_softclipped.sam" into softclipped_out	
 
 	script:
 
 	if (params.dry_run){
 
 	"""
-		cp ${params.dry_run_softclipped} softclipped.sam 	
+		cp ${params.dry_run_softclipped} ${ID}_softclipped.sam 	
 	"""		
 
 	}else{
 
 	"""
-		bash ${params.tc_hunter_path}/Scripts/runSoftClipExtraction.sh $bam softclipped.sam 	
+		bash ${params.tc_hunter_path}/Scripts/runSoftClipExtraction.sh ${bam} ${ID}_softclipped.sam 	
 	"""	
 	}
 }
@@ -88,15 +108,15 @@ process create_links_sup {
 	module 'samtools/1.9'
 
 	input:
-		file bam, bai from bwa_mem_out_links
+		set ID, bam, bai from bwa_mem_out_links
 
 	output:
-		file "sup_links.txt" into sup_links	
+		file "${ID}_sup_links.txt" into sup_links	
 
 	script:
 		"""
-		bash ${params.tc_hunter_path}/Scripts/ExtractConstruct.sh $bam ${params.construct_name}
-		python ${params.tc_hunter_path}/Scripts/ExtractConstruct.py ${params.construct_name}.sam sup_links.txt
+		bash ${params.tc_hunter_path}/Scripts/ExtractConstruct.sh ${bam} ${params.construct_name}
+		python ${params.tc_hunter_path}/Scripts/ExtractConstruct.py ${params.construct_name}.sam ${ID}_sup_links.txt
 		"""
 
 }
@@ -111,14 +131,16 @@ process create_links_soft {
 	errorStrategy 'ignore'
 
 	input:
-		file sam from softclipped_out
+		set ID, sam from softclipped_out
 
 	output:
-		file 'links.txt' into links_out
+		set ID, "${ID}_links.txt" into links_out
+		file "${ID}_links.txt" into links_plot
 
 	script:
 	"""
-		python ${params.tc_hunter_path}/Scripts/FindLinks.py --sam ${sam} --mapq ${params.mapq} 
+		python ${params.tc_hunter_path}/Scripts/FindLinks.py --sam ${sam} --mapq ${params.mapq}
+		mv links.txt ${ID}_links.txt 
 	"""	
 
 }
@@ -138,14 +160,15 @@ process create_karyotype {
 	errorStrategy 'ignore'
 
 	input:
-		file links from links_out_karyo
+		set ID, links from links_out_karyo
 
 	output:
-		file 'karyotype.txt' into karyotype_out
+		file "${ID}_karyotype.txt" into karyotype_out
 
 	script:
 	"""
 		python ${params.tc_hunter_path}/Scripts/createKaryotype.py --links ${links} --construct_length ${params.construct_length}  
+		mv karyotype.txt ${ID}_karyotype.txt 
 	"""	
 }
 
@@ -166,16 +189,16 @@ process create_histogram {
 
 	input:
 		file karyo_file from karyotype_out_hist
-		file bam, bai from bwa_mem_out_hist		
+		set ID, bam, bai from bwa_mem_out_hist		
 
 	output:
-		file 'hist.txt' into hist_out	
+		file "${ID}_hist.txt" into hist_out	
 
 	script:
 
 	"""
-		python ${params.tc_hunter_path}/Scripts/createHistogram.py --karyo ${karyo_file} --bam $bam 
-	 	
+		python ${params.tc_hunter_path}/Scripts/createHistogram.py --karyo ${karyo_file} --bam ${bam} 
+	 	mv hist.txt ${ID}_hist.txt
 	"""	
 
 }
@@ -190,23 +213,47 @@ process create_plots {
 	module "igv"
 
 	input:
-		file 'links.txt' from links_out_circos
-		file 'karyotype.txt' from karyotype_out_circos
-		file 'hist.txt' from hist_out 
-		file "sup_links.txt" from sup_links
-		file bam, bai from bwa_mem_out_plots
+		//set name, links from links_out_circos
+		file links from links_plot
+		file karyo from karyotype_out_circos
+		file hist from hist_out 
+		file sup_links from sup_links
+		set ID, bam, bai from bwa_mem_out_plots
 		file jointRef from bwa_mem_out_ref
 
 	output:
-		file 'circlize.pdf' into circos_out  
+		file '${ID}_output.html' into plots_out  
+
+	script:
+	"""	
+		echo $links
+		python ${params.tc_hunter_path}/Scripts/createOutput.py --hist $hist --links $links --sup_links $sup_links --karyo $karyo --construct $construct_file --WorkDir ${params.workingDir} --tchunter ${params.tc_hunter_path} --bam $bam --ref $jointRef --name ${ID}
+		cp *pdf ${params.workingDir} || :
+		cp *png ${params.workingDir} || :
+	"""				
+}
+
+
+
+
+
+//----------------------Cretae final html summary report -------------------------------
+
+process create_html {
+	publishDir params.workingDir, mode: 'copy', overwrite: true
+	errorStrategy 'ignore'
+
+	input:
+		file html from plots_out.collect()
+
+	output:
+		file 'output_summary.html' into html_out  
 
 	script:
 	"""
-		python ${params.tc_hunter_path}/Scripts/createOutput.py --hist hist.txt --links links.txt --sup_links sup_links.txt --karyo karyotype.txt --construct $construct_file --WorkDir ${params.workingDir} --tchunter ${params.tc_hunter_path} --bam $bam --ref $jointRef
+		cat ${html} >> output_summary.html
 	"""				
-
 }
-
 
 
 

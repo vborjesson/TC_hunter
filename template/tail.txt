@@ -1,0 +1,19 @@
+</body>
+</html>
+
+<div>
+  <h5>Bioinformatic tools used</h5>
+  <p>BWA MEM v.0.7.5a</p> 
+  <p>Samtools v.1.9</p> 
+  <p>R v.3.5.1</p>
+  <p>python v.3.5.1</p>
+  <p>igv v.2.1.7</p>
+  <p>Nextflow v.19.01.0</p>  
+</div>
+
+</body>
+
+<footer>
+  <p align="center"> TC-hunter v.0.0 &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; Contact information: https://github.com/vborjesson/TC_hunter</p>
+
+</footer>

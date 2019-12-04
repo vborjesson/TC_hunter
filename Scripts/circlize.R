@@ -27,13 +27,15 @@ options(warn=-1)
 #opt_parser = OptionParser(option_list=option_list);
 #opt = parse_args(opt_parser);
 
+sample_name <- args[3]
+
 # Load data
-links <- data.table::fread("links.txt", data.table = F)
-sup_links <- data.table::fread("sup_links.txt", data.table = F)
+links <- data.table::fread(paste(sample_name, "_links.txt", sep=""), data.table = F)
+sup_links <- data.table::fread(paste(sample_name, "_sup_links.txt", sep=""), data.table = F)
 karyo <- data.table::fread("tmp_karyotype.txt", data.table = F)
-genes <- data.table::fread('genes.csv', data.table = F) 
+genes <- data.table::fread("genes.csv", data.table = F) 
 #construct <- data.table::fread('construct.txt', data.table = F)
-hist <- data.table::fread("hist.txt", data.table = F)
+hist <- data.table::fread(paste(sample_name, "_hist.txt", sep=""), data.table = F)
 out <- args[1]
 construct_path <- args[2]
 construct <- data.table::fread(construct_path, data.table = F)
