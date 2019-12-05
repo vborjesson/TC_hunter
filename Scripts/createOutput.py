@@ -204,8 +204,9 @@ def rank_sites (kar, links, sup_links):
 
 				makeHTML_pre(R_karyo[0], html_host_bp, R_karyo_construct[0], html_cons_bp, out_name_R, out_name_igv_1, out_name_igv_2, out_name_html, str(i+1), score_tot) # Create output file 
 
+	html_sample_out = '{}{}'.format(sample_id, '_output.html')			
 	makePlot_igv(sample_id)			
-	makeHTML(out_name_html)
+	makeHTML(html_sample_out)
 
 			#print (karyo_df)	
 			#print (link_df)
@@ -273,7 +274,7 @@ def makeHTML_pre (host_chr, host_bp, cons_chr, cons_bp, circ_name, igv1_name, ig
 	subprocess.call ('echo "<tr>" >> out_middle.txt', shell=True)
 	subprocess.call ('echo "<th scope=col></th>" >> out_middle.txt', shell=True)
 	subprocess.call ('echo "<th scope=row>' + rank_n + '</th>" >> out_middle.txt', shell=True)
-	subprocess.call ('echo "<td>' + score + '</td>" >> out_middle.txt', shell=True)
+	subprocess.call ('echo "<td>' + str(score) + '</td>" >> out_middle.txt', shell=True)
 	subprocess.call ('echo "<td>' + host_chr + ' ' + host_bp + '</td>" >> out_middle.txt', shell=True)
 	subprocess.call ('echo "<td>' + cons_chr + ' ' + cons_bp + '</td>" >> out_middle.txt', shell=True)
 	subprocess.call ('echo "<td><a href=' + circ_name + '><img src=' + circ_name + 'title='' width=40 height=40 /></a> &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;" >> out_middle.txt', shell=True)
@@ -284,7 +285,8 @@ def makeHTML_pre (host_chr, host_bp, cons_chr, cons_bp, circ_name, igv1_name, ig
 
 
 def makeHTML (name):
-	output_file = '{}/{}'.format(WD, name) 
+	#output_file = '{}/{}'.format(WD, name) 
+	output_file = name
 	template1 = '{}/{}'.format(TC, "template/out_part1.txt")
 	template2 = '{}/{}'.format(TC, "template/out_part2.txt")
 
