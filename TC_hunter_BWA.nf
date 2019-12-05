@@ -222,11 +222,10 @@ process create_plots {
 		file jointRef from bwa_mem_out_ref
 
 	output:
-		file '${ID}_output.html' into plots_out  
+		file "${ID}_output.html" into plots_out  
 
 	script:
 	"""	
-		echo $links
 		python ${params.tc_hunter_path}/Scripts/createOutput.py --hist $hist --links $links --sup_links $sup_links --karyo $karyo --construct $construct_file --WorkDir ${params.workingDir} --tchunter ${params.tc_hunter_path} --bam $bam --ref $jointRef --name ${ID}
 		cp *pdf ${params.workingDir} || :
 		cp *png ${params.workingDir} || :

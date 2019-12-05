@@ -1,5 +1,7 @@
 # TC_hunter
 
+![](Plots/circlize.png){width=50%}![](Plots/tc_hunter_out.png){width=50%}
+
 ## TC-hunter identifies transgenic insertion sites within host genome
 
 TC-hunter searches for transgenic insertion sites in a host genome and returns figures and a report to support these findings. 
@@ -49,6 +51,5 @@ Before running, make sure you have a config file with all required information (
 nextflow TC_hunter.nf -c <file.config> [-with-report <report name>]
 ```
 
-![](Plots/plot1.png
 
 

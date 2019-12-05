@@ -282,7 +282,7 @@ def makeHTML_pre (host_chr, host_bp, cons_chr, cons_bp, circ_name, igv1_name, ig
 	subprocess.call ('echo "<td><a href=' + igv2_name + '><img src=' + igv2_name + 'title='' width=40 height=40 /></a>" >> out_middle.txt', shell=True)
 	subprocess.call ('echo "</td>" >> out_middle.txt', shell=True)
 	subprocess.call ('echo "</tr>" >> out_middle.txt', shell=True)
-
+	print('HTML table done for', igv1_name)
 
 def makeHTML (name):
 	#output_file = '{}/{}'.format(WD, name) 
@@ -294,7 +294,7 @@ def makeHTML (name):
 	subprocess.call ('cat out_middle.txt >> ' + output_file, shell=True)
 	subprocess.call ('cat ' + template2 + ' >> ' + output_file, shell=True)
 
-	subprocess.call ('rm out_middle.txt', shell=True)
+	# subprocess.call ('rm out_middle.txt', shell=True)
 
 
 
