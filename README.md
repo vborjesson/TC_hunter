@@ -46,25 +46,36 @@ cp TC_hunter/template/tc_hunter.config /path/to/WorkingDir
 ```
 
 Add required information to config file
+* TC_hunter.nf
 
-| First Header  | Second Header |
-| ------------- | ------------- |
-| Content Cell  | Content Cell  |
-| Content Cell  | Content Cell  |
+| Argument  | Usage | Description |
+| ------------- | ------------- | ------------- |
+|  WorkingDir | <Path/WorkingDir>  | Path to your working directory (this is where the output html and figures will be) |
+| TC_hunter_path  | <Path/TC_hunter>  | Path to TC_hunter, only TC_hunter if it's in your $PATH |
+| Construct_file | <path/construct.txt> | Path to your construct.txt file (See construct file below) |
+| Construct_length | <length> | The length in numbers of your construct that will be plotted |
+| Construct name | <name> | The name of your construct, most match your reference file. |
+| bam | <path/bam/> | The path to the directory where you have your bam file or (if several sampes) bam files. |
+| Reference | <jointref.fa> | Path to the merged reference file including both host and construct genome |
 
-### Run TC_hunter.nf
+
+
+
+## Run TC_hunter.nf
 
 ```
 nextflow TC_hunter.nf -c <file.config> [-with-report <report name>]
 ```
 
-### Run TC_hunter_BWA.nf
+## Run TC_hunter_BWA.nf
 
 Before running, make sure you have a config file with all required information (see Config).  
 
 ```
 nextflow TC_hunter_BWA.nf -c <file.config> [-with-report <report name>]
 ```
+
+## Understand your output 
 
 ![](Plots/tc_hunter_out.png)
 ![](Plots/circlize.png)!
