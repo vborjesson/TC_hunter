@@ -46,7 +46,7 @@ cp TC_hunter/template/tc_hunter.config /path/to/WorkingDir
 ```
 
 Add required information to config file
-* TC_hunter.nf
+### TC_hunter.nf
 
 | Argument  | Usage | Description |
 | ------------- | ------------- | ------------- |
@@ -54,11 +54,11 @@ Add required information to config file
 | TC_hunter_path  | <Path/TC_hunter>  | Path to TC_hunter, only TC_hunter if it's in your $PATH |
 | Construct_file  | <Path/construct.txt>  | Path to your construct.txt file (See construct file below) |
 | Construct_length  | <Length>  | The length in numbers of your construct that will be plotted |
-| Construct_name  | <Name>  | The name of your construct, most match your reference file |
+| Construct_name  | <Name>  | The name of the construct, most match the name in the reference file |
 | bam | <Bam_directory> | The path to the directory where you have your bam file or (if several sampes) bam files. |
 | Reference | <Jointref.fa> | Path to the merged reference file including both host and construct genome |
 
-* TC_hunter_BWA.nf
+### TC_hunter_BWA.nf
 
 
 | Argument  | Usage | Description |
@@ -67,11 +67,25 @@ Add required information to config file
 | TC_hunter_path  | <Path/TC_hunter>  | Path to TC_hunter, only TC_hunter if it's in your $PATH |
 | Construct_file  | <Path/construct.txt>  | Path to your construct.txt file (See construct file below) |
 | Construct_length  | <Length>  | The length in numbers of your construct that will be plotted |
-| Construct_name  | <Name>  | The name of your construct, most match your reference file |
+| Construct_name  | <Name>  | The name of the construct, most match the neme in your reference file |
 | sample | <sample_directory> | Path to directory where you have the fastq-files (R1 and R2) |
 | folder | <sample_directory> | Path to directory containing one directory for each sample. The name of the samples will be the same as the directory names |
 | host_ref | <host_ref.fa> | Path to host reference file |
 | construct_ref | <construct_ref.fa> | Path to construct reference file |
+
+
+### Create construct.txt
+
+In order to generate figures with construct information, you need to add that info. 
+Create a file with the gene info per line, seperated by simple single space. The info should be; 1) name, 2) start position and 3) end position. 
+
+ex.   
+Amp 1 500   
+lyz 1000 1200       
+Gene1 2000 5000		
+bla 7000 7700			
+
+
 
 ## Run TC_hunter.nf
 
