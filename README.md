@@ -46,6 +46,7 @@ cp TC_hunter/template/tc_hunter.config /path/to/WorkingDir
 ```
 
 Add required information to config file
+
 | First Header  | Second Header |
 | ------------- | ------------- |
 | Content Cell  | Content Cell  |
