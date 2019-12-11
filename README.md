@@ -1,7 +1,5 @@
 # TC_hunter
 
-[](Plots/tc_hunter_out.png)
-
 ## TC-hunter identifies transgenic insertion sites within host genome
 
 TC-hunter searches for transgenic insertion sites in a host genome and returns figures and a report to support these findings. 
@@ -13,7 +11,10 @@ Accepts one or several aligned BAM files (mapped to both host and transgenic seq
 TC-hunter then identifies anchors and chimeric reads that maps to both host and transgenig sequence.    
 
 * TC_hunter_BWA.nf -
-TC_hunter_BWA accepts raw pair end fastq files (from one or several samples) as inbut and performes BWA MEM alignment before searching for trasgenic insertion site.       
+TC_hunter_BWA accepts raw pair end fastq files (from one or several samples) as input and performes BWA MEM alignment before searching for trasgenic insertion site.       
+
+![](Plots/TC_hunter_pipeline.png)
+
 
 ## Software Dependencies
 
@@ -65,5 +66,6 @@ Before running, make sure you have a config file with all required information (
 nextflow TC_hunter_BWA.nf -c <file.config> [-with-report <report name>]
 ```
 
+![](Plots/tc_hunter_out.png)
 ![](Plots/circlize.png)!
 
