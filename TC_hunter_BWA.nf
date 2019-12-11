@@ -7,7 +7,6 @@ params.folder = ""
 params.sample = ""
 
 // Channel all samples from folder in order to parallelize longranger
-// Each sample is set into a tuple with ID and path (This will be the input in the longranger process)
 if (params.folder) {
 	String character = "/*";
 	String folder_path = params.folder;
@@ -16,7 +15,6 @@ if (params.folder) {
 }
 
 // If just one sample; no channels are needed
-// The sample is set into a tuple with ID and path (This will be the input for the longranger process)
 if (params.sample) {
 	String character = "/*";
 	String folder_path = params.sample;
