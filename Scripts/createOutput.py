@@ -206,7 +206,7 @@ def rank_sites (kar, links, sup_links):
 
 	html_sample_out = '{}{}'.format(sample_id, '_output.html')			
 	makePlot_igv(sample_id)			
-	makeHTML(html_sample_out)
+	makeHTML(html_sample_out, sample_id)
 
 			#print (karyo_df)	
 			#print (link_df)
@@ -284,12 +284,13 @@ def makeHTML_pre (host_chr, host_bp, cons_chr, cons_bp, circ_name, igv1_name, ig
 	subprocess.call ('echo "</tr>" >> out_middle.txt', shell=True)
 	print('HTML table done for', igv1_name)
 
-def makeHTML (name):
+def makeHTML (name, sample_id):
 	#output_file = '{}/{}'.format(WD, name) 
 	output_file = name
 	template1 = '{}/{}'.format(TC, "template/out_part1.txt")
 	template2 = '{}/{}'.format(TC, "template/out_part2.txt")
 
+	subprocess.call ('cat "<h3>' + smaple_id + '</h3>" > ' + output_file, shell=True)
 	subprocess.call ('cat ' + template1 + ' > ' + output_file, shell=True)
 	subprocess.call ('cat out_middle.txt >> ' + output_file, shell=True)
 	subprocess.call ('cat ' + template2 + ' >> ' + output_file, shell=True)

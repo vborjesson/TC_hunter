@@ -177,7 +177,7 @@ process create_histogram {
 	script:
 
 	"""
-		python ${params.tc_hunter_path}/Scripts/createHistogram.py --karyo ${karyo_file} --bam ${bam} 
+		python ${params.tc_hunter_path}/Scripts/createHistogram.py --karyo ${ID}_karyotype.txt --bam ${bam} 
 	 	mv hist.txt ${ID}_hist.txt
 	"""	
 
@@ -194,11 +194,11 @@ process create_plots {
 
 	input:
 		//set name, links from links_out_circos
-		file links from links_plot
-		file karyo from karyotype_out_circos
-		file hist from hist_out 
-		file sup_links from sup_links
 		set ID, bam, bai from bwa_mem_out_plots
+		file "${ID}_links.txt" from links_plot
+		file "${ID}_karyotype.txt" from karyotype_out_circos
+		file "${ID}_hist.txt" from hist_out 
+		file "${ID}_sup_links.txt" from sup_links
 		//file jointRef from bwa_mem_out_ref
 
 	output:
@@ -206,7 +206,7 @@ process create_plots {
 
 	script:
 	"""	
-		python ${params.tc_hunter_path}/Scripts/createOutput.py --hist $hist --links $links --sup_links $sup_links --karyo $karyo --construct $construct_file --WorkDir ${params.workingDir} --tchunter ${params.tc_hunter_path} --bam $bam --ref ${params.reference} --name ${ID}
+		python ${params.tc_hunter_path}/Scripts/createOutput.py --hist ${ID}_hist.txt --links ${ID}_links.txt --sup_links ${ID}_sup_links.txt --karyo ${ID}_karyotype.txt --construct $construct_file --WorkDir ${params.workingDir} --tchunter ${params.tc_hunter_path} --bam $bam --ref ${params.reference} --name ${ID}
 		cp *pdf ${params.workingDir} || :
 		cp *png ${params.workingDir} || :
 	"""				

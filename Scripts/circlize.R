@@ -40,11 +40,24 @@ out <- args[1]
 construct_path <- args[2]
 construct <- data.table::fread(construct_path, data.table = F)
 
+
+####################################Only for test#####################
 #out <- 'circ_test.pdf'
 #out <- 'out.pdf'
-#construct_path = 'construct.txt'
+#construct_path = 'construct.csv'
+#sample_name = "sample1"
 
-construct
+#links <- data.table::fread("links.txt", data.table = F)
+#sup_links <- data.table::fread("sup_links.txt", data.table = F)
+#karyo <- data.table::fread("tmp_karyotype.txt", data.table = F)
+#genes <- data.table::fread("genes.csv", data.table = F) 
+#construct <- data.table::fread('construct.txt', data.table = F)
+#hist <- data.table::fread("hist.txt", data.table = F)
+#out <- args[1]
+#construct_path <- args[2]
+#construct <- data.table::fread(construct_path, data.table = F)
+####################################Only for test#####################
+
 
 chrom_name = karyo[1,1]
 construct_name = karyo[2,1]
@@ -88,6 +101,11 @@ max_h
 #circos.initializeWithIdeogram(plotType = NULL)
 
 
+# Calculate what major to use for labeling
+start_chrom = max(chrom_table[1])
+end_chrom = min(chrom_table[1])
+label_major = (start_chrom - end_chrom) / 10
+label_major = round(label_major, digits = -3)
 
 
 
@@ -99,7 +117,7 @@ pdf(out,width=10,height=10,paper='special')
 #png(out, width=1000, height=1000, res=300)
 
 # Initiate plot 
-circos.genomicInitialize(karyo, tickLabelsStartFromZero = FALSE, axis.labels.cex = 1, labels.cex = 1.5, major.by = 1000)
+circos.genomicInitialize(karyo, tickLabelsStartFromZero = FALSE, axis.labels.cex = 1, labels.cex = 1.5, major.by = label_major)
 # add track 
 circos.track(factors = df$id, ylim = c(0, 2), bg.col = c("#BDBDBD", "#8A0808"), track.height=0.02, cell.padding=c(0,0,0,0))
 #circos.track(factors = genes$chromosome_name, ylim = c(0, 2), bg.col = c("#D9681D", "#15576D"), track.height=0.02, cell.padding=c(0,0,0,0))
@@ -176,8 +194,8 @@ for (i in 1:nrow(sup_links)){
     )
 }
 
-head(sup_links)
-head(links)
+#head(sup_links)
+#head(links)
 for (i in 1:nrow(links)){
 	tryCatch({
 	#print(sup_links[i,6])

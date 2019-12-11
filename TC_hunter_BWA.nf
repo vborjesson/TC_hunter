@@ -66,7 +66,6 @@ bwa_mem_out.into {
 }
 
 
-
 //----------------------Extract reads with soft clips in construct = BWA mem-------------------------------
 
 process extract_reads_bwa {
@@ -160,7 +159,7 @@ process create_karyotype {
 	errorStrategy 'ignore'
 
 	input:
-		set ID, links from links_out_karyo
+		set ID, file(links) from links_out_karyo
 
 	output:
 		file "${ID}_karyotype.txt" into karyotype_out
@@ -178,6 +177,10 @@ karyotype_out.into {
 }
 
 
+// merge karyotype and bam output
+//karyotype_out_hist.cross(bwa_mem_out_hist).map{it ->  [it[0][0],it[1][1],it[1][2],it[1][3]]}
+//karyotype_out_hist.cross(bwa_mem_out_hist).subscribe { println it }
+
 //----------------------Create histogram file-------------------------------
 
 
@@ -188,8 +191,9 @@ process create_histogram {
 	module 'samtools/1.9'
 
 	input:
-		file karyo_file from karyotype_out_hist
-		set ID, bam, bai from bwa_mem_out_hist		
+		set ID, file(bam), file(bai) from bwa_mem_out_hist		
+		file "${ID}_karyotype.txt" from karyotype_out_hist
+		//set file(karyo_file), ID, file(bam), file(bai) from karyotype_out_hist
 
 	output:
 		file "${ID}_hist.txt" into hist_out	
@@ -197,7 +201,7 @@ process create_histogram {
 	script:
 
 	"""
-		python ${params.tc_hunter_path}/Scripts/createHistogram.py --karyo ${karyo_file} --bam ${bam} 
+		python ${params.tc_hunter_path}/Scripts/createHistogram.py --karyo ${ID}_karyotype.txt --bam ${bam} 
 	 	mv hist.txt ${ID}_hist.txt
 	"""	
 
@@ -214,19 +218,19 @@ process create_plots {
 
 	input:
 		//set name, links from links_out_circos
-		file links from links_plot
-		file karyo from karyotype_out_circos
-		file hist from hist_out 
-		file sup_links from sup_links
 		set ID, bam, bai from bwa_mem_out_plots
-		file jointRef from bwa_mem_out_ref
+		file "${ID}_links.txt" from links_plot
+		file "${ID}_karyotype.txt" from karyotype_out_circos
+		file "${ID}_hist.txt" from hist_out 
+		file "${ID}_sup_links.txt" from sup_links
+		//file jointRef from bwa_mem_out_ref
 
 	output:
 		file "${ID}_output.html" into plots_out  
 
 	script:
 	"""	
-		python ${params.tc_hunter_path}/Scripts/createOutput.py --hist $hist --links $links --sup_links $sup_links --karyo $karyo --construct $construct_file --WorkDir ${params.workingDir} --tchunter ${params.tc_hunter_path} --bam $bam --ref $jointRef --name ${ID}
+		python ${params.tc_hunter_path}/Scripts/createOutput.py --hist ${ID}_hist.txt --links ${ID}_links.txt --sup_links ${ID}_sup_links.txt --karyo ${ID}_karyotype.txt --construct $construct_file --WorkDir ${params.workingDir} --tchunter ${params.tc_hunter_path} --bam $bam --ref ${params.reference} --name ${ID}
 		cp *pdf ${params.workingDir} || :
 		cp *png ${params.workingDir} || :
 	"""				
@@ -243,19 +247,15 @@ process create_html {
 	errorStrategy 'ignore'
 
 	input:
-		file html from plots_out.collect()
+		file "*_output.html" from plots_out.collect()
 
 	output:
 		file 'output_summary.html' into html_out  
 
 	script:
 	"""
-		cat ${html} >> output_summary.html
+		cat ${params.tc_hunter_path}/template/header.html > output_summary.html
+		cat *_output.html >> output_summary.html
+		cat ${params.tc_hunter_path}/template/tail.txt >> output_summary.html
 	"""				
 }
-
-
-
-
-
-
