@@ -52,11 +52,11 @@ Add required information to config file
 | ------------- | ------------- | ------------- |
 |  WorkingDir | <Path/WorkingDir>  | Path to your working directory (this is where the output html and figures will be) |
 | TC_hunter_path  | <Path/TC_hunter>  | Path to TC_hunter, only TC_hunter if it's in your $PATH |
-| Construct_file | <path/construct.txt> | Path to your construct.txt file (See construct file below) |
-| Construct_length | <length> | The length in numbers of your construct that will be plotted |
-| Construct name | <name> | The name of your construct, most match your reference file. |
-| bam | <path/bam/> | The path to the directory where you have your bam file or (if several sampes) bam files. |
-| Reference | <jointref.fa> | Path to the merged reference file including both host and construct genome |
+| Construct_file | <Path/construct.txt> | Path to your construct.txt file (See construct file below) |
+| Construct_length | <Length> | The length in numbers of your construct that will be plotted |
+| Construct name | <Name> | The name of your construct, most match your reference file |
+| bam | <Bam_directory> | The path to the directory where you have your bam file or (if several sampes) bam files. |
+| Reference | <Jointref.fa> | Path to the merged reference file including both host and construct genome |
 
 
 
