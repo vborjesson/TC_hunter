@@ -79,15 +79,18 @@ Add required information to config file
 In order to generate figures with construct information, you need to add that info. 
 Create a file with the gene info per line, seperated by simple single space. The info should be; 1) name, 2) start position and 3) end position. 
 
-ex.   
+e.g.   
 Amp 1 500   
 lyz 1000 1200       
-Gene1 2000 5000		
-bla 7000 7700			
+Gene1 2000 5000		      
+Gene2 7000 7700	     		
 
 
 
 ## Run TC_hunter.nf
+
+Before running, make sure you have a config file with all required information (see Config).  
+
 
 ```
 nextflow TC_hunter.nf -c <file.config> [-with-report <report name>]
@@ -96,6 +99,7 @@ nextflow TC_hunter.nf -c <file.config> [-with-report <report name>]
 ## Run TC_hunter_BWA.nf
 
 Before running, make sure you have a config file with all required information (see Config).  
+
 
 ```
 nextflow TC_hunter_BWA.nf -c <file.config> [-with-report <report name>]
