@@ -30,7 +30,6 @@ igv v.2.1.7 (You can choose to run this separately)
 Clone the repository from Github and put it in your path (or add the direct path to config file) 
 ```
 $ git clone https://github.com/vborjesson/TC_hunter.git
-
 ```
 
 Install required programs and tools using Anaconda
