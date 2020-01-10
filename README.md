@@ -41,7 +41,7 @@ $ conda env create --file TC_hunter/Scripts/Nextflow_env.yml
 
 Create a configuration file from template.
 ```
-$ cp TC_hunter/template/tc_hunter.config /path/to/WorkingDir 
+$ cp TC_hunter/template/TC_hunter.config /path/to/WorkingDir 
 ```
 
 Add required information to config file
@@ -52,7 +52,7 @@ Add required information to config file
 |  WorkingDir | <Path/WorkingDir>  | Path to your working directory (this is where the output html and figures will be) |
 | TC_hunter_path  | <Path/TC_hunter>  | Path to TC_hunter, only TC_hunter if it's in your $PATH |
 | Construct_file  | <Path/construct.txt>  | Path to your construct.txt file (See construct file below) |
-| Construct_length  | <Length>  | The length in numbers of your construct that will be plotted |
+| Construct_length  | <Length>  | The length of your construct in numbers |
 | Construct_name  | <Name>  | The name of the construct, most match the name in the reference file |
 | bam | <Bam_directory> | The path to the directory where you have your bam file or (if several sampes) bam files. |
 | Reference | <Jointref.fa> | Path to the merged reference file including both host and construct genome |
