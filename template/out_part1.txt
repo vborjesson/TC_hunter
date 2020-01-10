@@ -5,7 +5,7 @@
       <th scope="col"><H3>Ranking</H3></th>
       <th scope="col"><H3>Score</H3></th>
       <th scope="col"><H3>Breakpoint host</H3></th>
-      <th scope="col"><H3>Breakpoint construct</H3></th>
+      <th scope="col"><H3>Inserted construct</H3></th>
       <th scope="col"><H3>Figures</H3></th>
     </tr>
   </thead>

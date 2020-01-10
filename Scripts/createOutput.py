@@ -270,12 +270,15 @@ def makePlot_igv (sample_id):
 
 def makeHTML_pre (host_chr, host_bp, cons_chr, cons_bp, circ_name, igv1_name, igv2_name, html_name, rank_n, score):
 
+	host_bp_list = host_bp.split(' - ')
+	in_size = int(host_bp_list[0]) - int(host_bp_list[1])
+
 	print('creating HTML tables..')
 	subprocess.call ('echo "<tr>" >> out_middle.txt', shell=True)
 	subprocess.call ('echo "<th scope=col></th>" >> out_middle.txt', shell=True)
 	subprocess.call ('echo "<th scope=row>' + rank_n + '</th>" >> out_middle.txt', shell=True)
 	subprocess.call ('echo "<td>' + str(score) + '</td>" >> out_middle.txt', shell=True)
-	subprocess.call ('echo "<td>' + host_chr + ' ' + host_bp + '</td>" >> out_middle.txt', shell=True)
+	subprocess.call ('echo "<td>' + host_chr + ' ' + host_bp + ' (' + in_size + ') ' + </td>" >> out_middle.txt', shell=True)
 	subprocess.call ('echo "<td>' + cons_chr + ' ' + cons_bp + '</td>" >> out_middle.txt', shell=True)
 	subprocess.call ('echo "<td><a href=' + circ_name + '><img src=' + circ_name + 'title='' width=40 height=40 /></a> &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;" >> out_middle.txt', shell=True)
 	subprocess.call ('echo "<td><a href=' + igv1_name + '><img src=' + igv1_name + 'title='' width=40 height=40 /></a> &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;" >> out_middle.txt', shell=True)

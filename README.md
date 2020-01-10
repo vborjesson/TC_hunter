@@ -18,12 +18,12 @@ TC_hunter_BWA accepts raw pair end fastq files (from one or several samples) as 
 
 ## Software Dependencies
 
-Nextflow v.19.01.0		           		     
-BWA MEM v.0.7.5a (only if you run TC_hunter_BWA.nf)	         		
-Samtools v.1.9       	   	    		
-R v.3.5.1    			      
-python v.3.5.1     	        	    	
-igv v.2.1.7 (You can choose to run this separately)	          			
+Nextflow v.19.01.0          		           		     
+BWA MEM v.0.7.5a (only if you run TC_hunter_BWA.nf)              	         		
+Samtools v.1.9                	   	    		
+R v.3.5.1          			      
+python v.3.5.1         					             	        	    	
+igv v.2.1.7 (You can choose to run this separately)        	          			
 
 ## Install TC-hunter 
 
