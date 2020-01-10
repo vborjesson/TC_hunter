@@ -56,20 +56,12 @@ process extract_reads_bwa {
 	output:
 		set ID, "${ID}_softclipped.sam" into softclipped_out	
 
-	script:
-
-	if (params.dry_run){
-
-	"""
-		cp ${params.dry_run_softclipped} ${ID}_softclipped.sam 	
-	"""		
-
-	}else{
+	script:	
 
 	"""
 		bash ${params.tc_hunter_path}/Scripts/runSoftClipExtraction.sh ${bam} ${ID}_softclipped.sam 	
 	"""	
-	}
+	
 }
 
 

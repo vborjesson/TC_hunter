@@ -290,7 +290,7 @@ def makeHTML (name, sample_id):
 	template1 = '{}/{}'.format(TC, "template/out_part1.txt")
 	template2 = '{}/{}'.format(TC, "template/out_part2.txt")
 
-	subprocess.call ('cat "<h3>' + smaple_id + '</h3>" > ' + output_file, shell=True)
+	subprocess.call ('echo "<h3>' + sample_id + '</h3>" > ' + output_file, shell=True)
 	subprocess.call ('cat ' + template1 + ' > ' + output_file, shell=True)
 	subprocess.call ('cat out_middle.txt >> ' + output_file, shell=True)
 	subprocess.call ('cat ' + template2 + ' >> ' + output_file, shell=True)
@@ -327,7 +327,7 @@ def find_construct_bp (links, host_chr, host_bp1, host_bp2):
 				construct_bp2.append(line[1])
 	
 			#print(max(set(numbers), key=numbers.count))	
-		print(construct_bp1, construct_bp2)	
+		print('Construct_bp1 and construct_bp2', construct_bp1, construct_bp2)	
 		#print(construct_bp1)
 		if len(construct_bp1)==0:
 			bp_1 = 'Unknown'
@@ -335,10 +335,14 @@ def find_construct_bp (links, host_chr, host_bp1, host_bp2):
 		if len(construct_bp1)!=0:	
 			bp_1 = most_frequent(construct_bp1)
 		
-		# If host basepairs is the same look for the second most common:
+		# If host basepairs are the same look for the second most common: 
 		if host_bp1 == host_bp2:
 			construct_bp2[:] = (value for value in construct_bp2 if value != bp_1)
-			bp_2 = most_frequent(construct_bp2)
+			if len(construct_bp2) == 0: # If only one bp position exist
+				bp_2 = 'Unknown'
+
+			else:
+				bp_2 = most_frequent(construct_bp2) 
 
 		if host_bp1 != host_bp2:
 			bp_2 = most_frequent(construct_bp2)

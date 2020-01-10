@@ -221,6 +221,7 @@ process create_plots {
 		file "${ID}_karyotype.txt" from karyotype_out_circos
 		file "${ID}_hist.txt" from hist_out 
 		file "${ID}_sup_links.txt" from sup_links
+		file ref from bwa_mem_out_ref
 		//file jointRef from bwa_mem_out_ref
 
 	output:
@@ -228,7 +229,7 @@ process create_plots {
 
 	script:
 	"""	
-		python ${params.tc_hunter_path}/Scripts/createOutput.py --hist ${ID}_hist.txt --links ${ID}_links.txt --sup_links ${ID}_sup_links.txt --karyo ${ID}_karyotype.txt --construct $construct_file --WorkDir ${params.workingDir} --tchunter ${params.tc_hunter_path} --bam $bam --ref ${params.reference} --name ${ID}
+		python ${params.tc_hunter_path}/Scripts/createOutput.py --hist ${ID}_hist.txt --links ${ID}_links.txt --sup_links ${ID}_sup_links.txt --karyo ${ID}_karyotype.txt --construct $construct_file --WorkDir ${params.workingDir} --tchunter ${params.tc_hunter_path} --bam $bam --ref $ref --name ${ID}
 		cp *pdf ${params.workingDir} || :
 		cp *png ${params.workingDir} || :
 	"""				
