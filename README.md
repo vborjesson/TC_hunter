@@ -22,8 +22,8 @@ TC_hunter_BWA accepts raw pair end fastq files (from one or several samples) as 
 * BWA MEM v.0.7.5a (only if you run TC_hunter_BWA.nf)              	         		
 * Samtools v.1.9                	   	    		
 * R v.3.5.1          			      
-* python v.3.5.1         					             	        	    	
-* igv v.2.1.7 (You can choose to run this separately)        	          			
+* python v.2.7.11        					             	        	    	
+* igv v.2.1.7 (You can choose to run this separately fom the pipeline)        	          			
 
 ## Install TC-hunter 
 
@@ -34,7 +34,7 @@ $ git clone https://github.com/vborjesson/TC_hunter.git
 
 Install required programs and tools using Anaconda
 ```
-$ conda env create --file TC_hunter/Scripts/Nextflow_env.txt
+$ conda env create --file TC_hunter/Scripts/Nextflow_env.yml
 ```
 
 ## Make Configuration file 
