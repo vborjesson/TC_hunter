@@ -51,8 +51,7 @@ process bwa_mem {
 		samtools sort ${ID}.bam ${ID}_sorted
 		samtools index ${ID}_sorted.bam	
 	
-	"""	
-	
+	"""		
 }
 
 // outputs can only be used once as input in a new process, therefor we copy them into several identical outputs. 
@@ -80,16 +79,8 @@ process extract_reads_bwa {
 
 	script:
 
-	if (params.dry_run){
-
 	"""
-		cp ${params.dry_run_softclipped} ${ID}_softclipped.sam 	
-	"""		
-
-	}else{
-
-	"""
-		bash ${params.tc_hunter_path}/Scripts/runSoftClipExtraction.sh ${bam} ${ID}_softclipped.sam 	
+		bash ${params.tc_hunter_path}/Scripts/runSoftClipExtraction.sh ${bam} ${ID}_softclipped.sam ${params.construct_name}	
 	"""	
 	}
 }

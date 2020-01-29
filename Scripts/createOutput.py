@@ -100,9 +100,26 @@ def rank_sites (kar, links, sup_links):
 
 						const_bp1, const_bp2 = find_construct_bp(links, R_karyo[0], int(R_karyo[1])+5000, int(R_karyo[2])-5000)
 						html_cons_bp = '{} - {}'.format(const_bp1, const_bp2) # bp position to be reported
-						igv_position_2 = '{}:{}-{}'.format(R_karyo[0], const_bp1, const_bp2) # igv span zoomed
+						igv_position_2 = '{}:{}-{}'.format(R_karyo_construct[0], const_bp1, const_bp2) # igv span zoomed
 
-				score_tot = 'comming soon'			
+				score_tot = '-'
+
+				link_df = pd.read_csv(links, sep=' ', names=['chrom1', 'start1','start2', 'chrom2', 'end1', 'end2'])
+				sup_link_df = pd.read_csv(sup_links, sep=' ', names=['chrom1', 'start1','start2', 'chrom2', 'end1', 'end2'])
+
+				int(R_karyo[1])+5000, int(R_karyo[2])-5000
+
+				score_softlink = int((link_df['chrom1'] == R_karyo[0]).sum())
+				score_softlink += int((link_df['chrom2'] == R_karyo[0]).sum())
+				
+				score_suplink = int((sup_link_df['chrom1'] == R_karyo[0]).sum())
+				score_suplink += int((sup_link_df['chrom2'] == R_karyo[0]).sum())
+				#print (site, score_softlink, score_suplink)		
+
+				total_score = float(score_softlink) 
+				total_score += float(score_suplink/1000)
+				
+				score_tot = total_score
 
 				Gene_annotation_R(biomart_string)
 				out_name_R = '{}{}'.format(sample_id, str('_circlize.pdf'))
@@ -146,8 +163,8 @@ def rank_sites (kar, links, sup_links):
 				score_suplink += int((sup_link_df['chrom2'] == site).sum())
 				#print (site, score_softlink, score_suplink)		
 
-				total_score = score_softlink * 10
-				total_score += score_suplink
+				total_score = float(score_softlink) 
+				total_score += float(score_suplink/1000)
 				karyo_df.loc[i, 'score'] = total_score
 
 			#print(karyo_df)
@@ -270,16 +287,19 @@ def makePlot_igv (sample_id):
 
 def makeHTML_pre (host_chr, host_bp, cons_chr, cons_bp, circ_name, igv1_name, igv2_name, html_name, rank_n, score):
 
-	host_bp_list = host_bp.split(' - ')
-	in_size = int(host_bp_list[0]) - int(host_bp_list[1])
+	cons_bp_list = cons_bp.split(' - ')
+	if cons_bp_list[0] == 'Unknown' or cons_bp_list[1] == 'Unknown':
+		in_size = 'Unknown'
+	else:
+		in_size = int(cons_bp_list[0]) - int(cons_bp_list[1])
 
 	print('creating HTML tables..')
 	subprocess.call ('echo "<tr>" >> out_middle.txt', shell=True)
 	subprocess.call ('echo "<th scope=col></th>" >> out_middle.txt', shell=True)
 	subprocess.call ('echo "<th scope=row>' + rank_n + '</th>" >> out_middle.txt', shell=True)
 	subprocess.call ('echo "<td>' + str(score) + '</td>" >> out_middle.txt', shell=True)
-	subprocess.call ('echo "<td>' + host_chr + ' ' + host_bp + ' (' + in_size + ') ' + </td>" >> out_middle.txt', shell=True)
-	subprocess.call ('echo "<td>' + cons_chr + ' ' + cons_bp + '</td>" >> out_middle.txt', shell=True)
+	subprocess.call ('echo "<td>' + host_chr + ' ' + host_bp + '</td>" >> out_middle.txt', shell=True)
+	subprocess.call ('echo "<td>' + cons_chr + ' ' + cons_bp + ' (' + str(in_size) + ') ' + '</td>" >> out_middle.txt', shell=True)
 	subprocess.call ('echo "<td><a href=' + circ_name + '><img src=' + circ_name + 'title='' width=40 height=40 /></a> &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;" >> out_middle.txt', shell=True)
 	subprocess.call ('echo "<td><a href=' + igv1_name + '><img src=' + igv1_name + 'title='' width=40 height=40 /></a> &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;" >> out_middle.txt', shell=True)
 	subprocess.call ('echo "<td><a href=' + igv2_name + '><img src=' + igv2_name + 'title='' width=40 height=40 /></a>" >> out_middle.txt', shell=True)
@@ -294,7 +314,7 @@ def makeHTML (name, sample_id):
 	template2 = '{}/{}'.format(TC, "template/out_part2.txt")
 
 	subprocess.call ('echo "<h3>' + sample_id + '</h3>" > ' + output_file, shell=True)
-	subprocess.call ('cat ' + template1 + ' > ' + output_file, shell=True)
+	subprocess.call ('cat ' + template1 + ' >> ' + output_file, shell=True)
 	subprocess.call ('cat out_middle.txt >> ' + output_file, shell=True)
 	subprocess.call ('cat ' + template2 + ' >> ' + output_file, shell=True)
 

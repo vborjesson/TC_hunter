@@ -1,13 +1,12 @@
 #!/usr/bin/env nextflow
 
+
 workingdirectory = params.workingDir
 construct_file = file(params.construct_file)
 
 sequences = Channel
                 .fromPath(params.bam)
-                .map { file -> tuple(file.baseName, file) }
-
-
+                .map { file -> tuple(file.baseName, file) }  
 
 
 //----------------------Samtools sort and index-------------------------------
@@ -32,6 +31,7 @@ process samtools_index {
 	"""	
 	
 }
+
 
 // outputs can only be used once as input in a new process, therefor we copy them into several identical outputs. 
 bwa_mem_out.into {
@@ -59,7 +59,7 @@ process extract_reads_bwa {
 	script:	
 
 	"""
-		bash ${params.tc_hunter_path}/Scripts/runSoftClipExtraction.sh ${bam} ${ID}_softclipped.sam 	
+		bash ${params.tc_hunter_path}/Scripts/runSoftClipExtraction.sh ${bam} ${ID}_softclipped.sam ${params.construct_name}	
 	"""	
 	
 }
@@ -227,3 +227,6 @@ process create_html {
 		cat ${params.tc_hunter_path}/template/tail.txt >> output_summary.html
 	"""				
 }
+
+
+

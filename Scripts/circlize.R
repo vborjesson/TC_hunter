@@ -42,9 +42,10 @@ construct <- data.table::fread(construct_path, data.table = F)
 
 
 ####################################Only for test#####################
+#sample_name <- 'M411_BWA_sorted'
 #out <- 'circ_test.pdf'
 #out <- 'out.pdf'
-#construct_path = 'construct.csv'
+#construct_path = '/jumbo/WorkingDir/B19-001/Intermediate/FINAL_M42/construct.txt'
 #sample_name = "sample1"
 
 #links <- data.table::fread("links.txt", data.table = F)
@@ -96,12 +97,13 @@ df <- rbind(chrom_table, construct_table)
 
 #head(chrom_table)
 #head(df)
+#max_h <- max(chrom_table$read_depth)
 max_h <- max(df$read_depth)
-max_h
+
 #circos.initializeWithIdeogram(plotType = NULL)
 
 
-# Calculate what major to use for labeling
+# Calculate what major (tick space) to use for labeling
 start_chrom = max(chrom_table[1])
 end_chrom = min(chrom_table[1])
 label_major = (start_chrom - end_chrom) / 10
@@ -117,7 +119,7 @@ pdf(out,width=10,height=10,paper='special')
 #png(out, width=1000, height=1000, res=300)
 
 # Initiate plot 
-circos.genomicInitialize(karyo, tickLabelsStartFromZero = FALSE, axis.labels.cex = 1, labels.cex = 1.5, major.by = label_major)
+circos.genomicInitialize(karyo, tickLabelsStartFromZero = FALSE, axis.labels.cex = 1, labels.cex = 1.5, major.by = label_major, sector.width=1)
 # add track 
 circos.track(factors = df$id, ylim = c(0, 2), bg.col = c("#BDBDBD", "#8A0808"), track.height=0.02, cell.padding=c(0,0,0,0))
 #circos.track(factors = genes$chromosome_name, ylim = c(0, 2), bg.col = c("#D9681D", "#15576D"), track.height=0.02, cell.padding=c(0,0,0,0))
@@ -128,16 +130,15 @@ circos.track(df$id, ylim=c(0,1), track.height=0.015, cell.padding=c(0,0,0,0), bg
 
 # Plot construct
 for (pos in 1:nrow(construct)){
-	circos.rect(construct[pos,2], 0, construct[pos,3], 1, sector.index = construct_name, col='black', track.index=3)
-	circos.text(((construct[pos,2]+construct[pos,3])/2), 0.5, labels= construct[pos, 1], cex= 1.2, track.index=4, bg.border = 'white')
+	circos.rect(construct[pos,2], 0, construct[pos,3]-30, 1, sector.index = construct_name, col='black', track.index=3)
+	circos.text(((construct[pos,2]+construct[pos,3])/2), 0.5, labels= construct[pos, 1], cex= 1.2, track.index=4, bg.border = 'white', facing= 'bending.inside')
 }
 
 # Plot annotation genes
 #circos.track(df$id, ylim=c(0,1), track.height=0.015, cell.padding=c(0,0,0,0), bg.border = 'white')
 
 # restrict genes to be within region 
-
- if (nrow(genes) > 1){
+if (nrow(genes) > 1){
 	for (pos in 1:nrow(genes)){
 		# restrict genes to be within region  	
 		if (genes[pos, 5] < karyo[1,2]){
@@ -146,29 +147,41 @@ for (pos in 1:nrow(construct)){
 		if (genes[pos, 6] > karyo[1,3]){
 			genes[pos, 6] <- karyo[1,3]
 		}
-		# Create gene-ines for annotations 
+		# Create gene-lines for annotations 
 		circos.lines(c(genes[pos,5], genes[pos,6]), c(0.5, 0.5), sector.index = chrom_name, col='#2E2E2E', track.index=3)
+		#circos.lines(c(23250000, 23270000), c(0.5, 0.5), sector.index = chrom_name, col='#2E2E2E', track.index=3)
 	}
+
 
 	a_start_pos <- genes$start_position
 	a_end_pos <- genes$start_position + 80
 	a_box <- data.frame(a_start_pos, a_end_pos)
+	#a_box <- data.frame(23250000, 23250000+80)
+
 	#a_box
 
 	a_start_pos <- genes$end_position
 	a_end_pos <- genes$end_position + 20
 	b_box <- data.frame(a_start_pos, a_end_pos)
+	#b_box <- data.frame(23257000-20, 23257000)
 	#b_box
 
 	box <- rbind(a_box, b_box)
 	#box
 
 	circos.genomicRect(box, ytop=1, ybottom=0, col='black', sector.index=chrom_name, track.index=3)
+
+	# Add text to genes 
+	for (pos in 1:nrow(genes)){
+		circos.text(((genes[pos,5]+genes[pos,6])/2), 0.5, labels= genes[pos, 2], cex= 1.2, sector.index = chrom_name, track.index=4, bg.border = 'white', facing= 'bending.inside')
+	}
+
 }
 
-# Add text to genes 
+
+## Add text to genes 
 #for (pos in 1:nrow(genes)){
-#	circos.text(((genes[pos,5]+genes[pos,6])/2), 0.5, labels= genes[pos, 2], cex= 1.2, sector.index = chrom_name, track.index=4, bg.border = 'white')
+#	circos.text(((genes[pos,5]+genes[pos,6])/2), 0.5, labels= genes[pos, 2], cex= 1.2, sector.index = chrom_name, track.index=4, bg.border = 'white', facing= 'bending.inside')
 #}
 
 # Histogram - read coverage
@@ -209,10 +222,15 @@ for (i in 1:nrow(links)){
 	)	
 }
 
+
+text(-1,-1, "-", adj = 0, col = 'red', cex=3)
+text(-0.92,-1, "Anchor read", adj = 0)
+text(-1,-1.05, "-", adj = 0, cex=3)
+text(-0.92,-1.05, "Soft clipped (chimeric) read", adj = 0)
+
+
 dev.off()
-circos.clear()
-
-
+circos.clear() 
 
 
 
