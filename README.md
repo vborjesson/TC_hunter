@@ -15,7 +15,10 @@ TC_hunter_BWA accepts raw pair end fastq files (from one or several samples) as 
 
 ![](Plots/TC_hunter_pipeline.png)
 
-<span style="color:red">some **This is Red Bold.** text</span>
+<div class="text-purple">
+  This text is purple, <a href="#" class="text-inherit">including the link</a>
+</div>
+
 
 
 ## Software Dependencies
