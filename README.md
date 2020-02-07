@@ -15,6 +15,8 @@ TC_hunter_BWA accepts raw pair end fastq files (from one or several samples) as 
 
 ![](Plots/TC_hunter_pipeline.png)
 
+<span style="color:red">some **This is Red Bold.** text</span>
+
 
 ## Software Dependencies
 
