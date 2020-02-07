@@ -74,6 +74,7 @@ e. g. [example.config](https://github.com/vborjesson/TC_hunter/blob/master/templ
 | host_ref | <host_ref.fa> | Path to host reference file |
 | construct_ref | <construct_ref.fa> | Path to construct reference file |
 
+e. g. [example.config](https://github.com/vborjesson/TC_hunter/blob/master/template/tchunter_BWA_example.config)
 
 ### Create construct.txt
 
