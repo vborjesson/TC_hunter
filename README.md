@@ -57,6 +57,8 @@ Add required information to config file
 | bam | <Bam_directory> | The path to the directory where you have your bam file or (if several sampes) bam files. |
 | Reference | <Jointref.fa> | Path to the merged reference file including both host and construct genome |
 
+e. g. [example.config](https://github.com/vborjesson/TC_hunter/blob/master/template/tchunter_example.config)
+
 ### TC_hunter_BWA.nf
 
 
