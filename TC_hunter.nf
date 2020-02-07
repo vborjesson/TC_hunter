@@ -1,8 +1,16 @@
 #!/usr/bin/env nextflow
 
-
 workingdirectory = params.workingDir
 construct_file = file(params.construct_file)
+
+print 'construct file'
+print '\n'
+print construct_file
+print '\n'
+print 'params.bam'
+print '\n'
+print params.bam
+
 
 sequences = Channel
                 .fromPath(params.bam)
@@ -181,8 +189,8 @@ process create_plots {
 	publishDir params.workingDir, mode: 'copy', overwrite: true
 	errorStrategy 'ignore'
 
-	module "R/3.5.1"
 	module "igv"
+	module "R/3.5.1"
 
 	input:
 		//set name, links from links_out_circos

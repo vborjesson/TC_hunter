@@ -12,11 +12,11 @@ library(biomaRt)
 
 #human = useMart("ensembl", dataset = "hsapiens_gene_ensembl")
 if (host == 'human') {
-	ensembl = useEnsembl(biomart="ensembl", dataset="hsapiens_gene_ensembl")
+	ensembl = useEnsembl(biomart="ensembl", dataset="hsapiens_gene_ensembl", mirror = "useast")
 	all.genes <- getBM(attributes = c("ensembl_gene_id","hgnc_symbol", "chromosome_name", "start_position", "end_position", "strand"), filters = "chromosomal_region", values = loc, mart = ensembl)
 
 }  else if (host == 'mouse') {
-	ensembl = useEnsembl(biomart="ensembl", dataset="mmusculus_gene_ensembl")
+	ensembl = useEnsembl(biomart="ensembl", dataset="mmusculus_gene_ensembl", mirror = "useast")
 	all.genes <- getBM(attributes = c("ensembl_gene_id","hgnc_symbol", "chromosome_name", "start_position", "end_position", "strand"), filters = "chromosomal_region", values = loc, mart = ensembl)
 
 } else {
@@ -25,6 +25,7 @@ if (host == 'human') {
 }
 
 all.genes <- getBM(attributes = c("ensembl_gene_id","hgnc_symbol", "chromosome_name", "start_position", "end_position", "strand"), filters = "chromosomal_region", values = loc, mart = ensembl)
-
+all.genes
 write.csv(all.genes, file= 'genes.csv')
+
 

@@ -81,8 +81,7 @@ process extract_reads_bwa {
 
 	"""
 		bash ${params.tc_hunter_path}/Scripts/runSoftClipExtraction.sh ${bam} ${ID}_softclipped.sam ${params.construct_name}	
-	"""	
-	}
+	"""		
 }
 
 

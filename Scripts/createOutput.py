@@ -29,6 +29,9 @@ import argparse
 import subprocess
 import pandas as pd
 
+import warnings
+warnings.simplefilter(action='ignore', category=FutureWarning)
+
 ########################################### ARGPARSER #############################################
 
 usage = '''This script takes links, karyotype and histogram files created so far as input. Statistics is performed in order 
@@ -109,12 +112,34 @@ def rank_sites (kar, links, sup_links):
 
 				int(R_karyo[1])+5000, int(R_karyo[2])-5000
 
+				print ('link_df')
+				print (link_df)	
+
+				print ('R_karyo')
+				print (R_karyo)	
+
+				sup_link_df['chrom1'] = sup_link_df['chrom1'].astype(str)
+				sup_link_df['chrom2'] = sup_link_df['chrom2'].astype(str)
+
+				link_df['chrom1'] = link_df['chrom1'].astype(str)
+				link_df['chrom2'] = link_df['chrom2'].astype(str)
+
+				score_softlink = 0
+				score_suplink = 0
+
 				score_softlink = int((link_df['chrom1'] == R_karyo[0]).sum())
 				score_softlink += int((link_df['chrom2'] == R_karyo[0]).sum())
 				
 				score_suplink = int((sup_link_df['chrom1'] == R_karyo[0]).sum())
 				score_suplink += int((sup_link_df['chrom2'] == R_karyo[0]).sum())
 				#print (site, score_softlink, score_suplink)		
+
+
+				print ('--------------------------------------')
+				print ('score softlink = ', score_softlink)
+				print ('score suplinks = ', score_suplink)
+				print ('--------------------------------------')
+
 
 				total_score = float(score_softlink) 
 				total_score += float(score_suplink/1000)
@@ -135,6 +160,7 @@ def rank_sites (kar, links, sup_links):
 
 		else: 
 			link_df = pd.read_csv(links, sep=' ', names=['chrom1', 'start1','start2', 'chrom2', 'end1', 'end2'])
+
 			sup_link_df = pd.read_csv(sup_links, sep=' ', names=['chrom1', 'start1','start2', 'chrom2', 'end1', 'end2'])
 
 			karyo_df_all = pd.read_csv(kar, sep=' ', names=['chrom', 'start', 'end'])
@@ -149,19 +175,30 @@ def rank_sites (kar, links, sup_links):
 			# Convert sup_link_df chromosomes to string instead of integer
 			sup_link_df['chrom1'] = sup_link_df['chrom1'].astype(str)
 			sup_link_df['chrom2'] = sup_link_df['chrom2'].astype(str)
+
+			link_df['chrom1'] = link_df['chrom1'].astype(str)
+			link_df['chrom2'] = link_df['chrom2'].astype(str)
 			
 			#print(karyo_df)
 			
 			# count which site is the most suported
 			for i in range(len(karyo_df)):
 				site = karyo_df['chrom'].iloc[i]
-				
+
 				score_softlink = int((link_df['chrom1'] == site).sum())
+				print('score_softlink1 ', score_softlink)
 				score_softlink += int((link_df['chrom2'] == site).sum())
-				
+				print('score_softlink2 ', score_softlink)
+
 				score_suplink = int((sup_link_df['chrom1'] == site).sum())
 				score_suplink += int((sup_link_df['chrom2'] == site).sum())
 				#print (site, score_softlink, score_suplink)		
+
+				print ('--------------------------------------')
+				print ('site =', site)
+				print ('score softlink = ', score_softlink)
+				print ('score suplinks = ', score_suplink)
+				print ('--------------------------------------')
 
 				total_score = float(score_softlink) 
 				total_score += float(score_suplink/1000)
