@@ -40,7 +40,7 @@ $ git clone https://github.com/vborjesson/TC_hunter.git
 
 Install required programs and tools using Anaconda
 ```
-$ conda env create --file TC_hunter/Scripts/Nextflow_env.yml
+$ conda env create --file TC_hunter/Scripts/TC_hunter.yml
 ```
 
 ## Make Configuration file 

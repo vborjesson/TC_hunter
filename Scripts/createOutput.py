@@ -142,7 +142,7 @@ def rank_sites (kar, links, sup_links):
 
 
 				total_score = float(score_softlink) 
-				total_score += float(score_suplink/1000)
+				total_score += float(score_suplink)/1000
 				
 				score_tot = total_score
 
@@ -201,7 +201,7 @@ def rank_sites (kar, links, sup_links):
 				print ('--------------------------------------')
 
 				total_score = float(score_softlink) 
-				total_score += float(score_suplink/1000)
+				total_score += float(score_suplink)/1000
 				karyo_df.loc[i, 'score'] = total_score
 
 			#print(karyo_df)
@@ -370,8 +370,8 @@ def find_construct_bp (links, host_chr, host_bp1, host_bp2):
 		for line in links_in:
 			line = line.split(' ')
 
-			#print(line)
-			#print(str(host_chr), str(host_bp1), str(host_bp2))
+			print(line)
+			print(str(host_chr), str(host_bp1), str(host_bp2))
 
 			# Check construct bp that matches the host bp
 			if (line[0] == host_chr and str(line[1]) == str(host_bp1)):
@@ -413,16 +413,18 @@ def find_construct_bp (links, host_chr, host_bp1, host_bp2):
 ########################################### Find most frequent number bp ###########################################
 
 def most_frequent(List): 
-    counter = 0
-    num = List[0] 
-      
-    for i in List: 
-        curr_frequency = List.count(i) 
-        if(curr_frequency> counter): 
-            counter = curr_frequency 
-            num = i 
-  
-    return num 
+	print ('------------------------') 
+	print('Heres the failing list: ', List)
+	counter = 0
+	num = List[0]
+
+	for i in List:
+		curr_frequency = List.count(i)
+		if(curr_frequency > counter):
+			counter = curr_frequency
+			num = i
+
+		return num 
 
 
 

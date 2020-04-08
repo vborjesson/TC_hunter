@@ -6,26 +6,34 @@
 args = commandArgs(trailingOnly=TRUE)
 loc <- args[1] # region to look for genes within
 
-host <- 'mouse'
+#host <- 'mouse'
 
 library(biomaRt)
 
-#human = useMart("ensembl", dataset = "hsapiens_gene_ensembl")
-if (host == 'human') {
-	ensembl = useEnsembl(biomart="ensembl", dataset="hsapiens_gene_ensembl", mirror = "useast")
-	all.genes <- getBM(attributes = c("ensembl_gene_id","hgnc_symbol", "chromosome_name", "start_position", "end_position", "strand"), filters = "chromosomal_region", values = loc, mart = ensembl)
+#print('start ')#
 
-}  else if (host == 'mouse') {
-	ensembl = useEnsembl(biomart="ensembl", dataset="mmusculus_gene_ensembl", mirror = "useast")
-	all.genes <- getBM(attributes = c("ensembl_gene_id","hgnc_symbol", "chromosome_name", "start_position", "end_position", "strand"), filters = "chromosomal_region", values = loc, mart = ensembl)
+##human = useMart("ensembl", dataset = "hsapiens_gene_ensembl")
+#if (host == 'human') {	
+#	try(ensembl = useEnsembl(biomart="ensembl", dataset="hsapiens_gene_ensembl", mirror = "useast"))
+#	try(all.genes <- getBM(attributes = c("ensembl_gene_id","hgnc_symbol", "chromosome_name", "start_position", "end_position", "strand"), filters = "chromosomal_region", values = loc, mart = ensembl))#
 
-} else {
-	host == 'Other' 
-	all.genes <- ''
-}
+#}  else if (host == 'mouse') {
+#	try(ensembl = useEnsembl(biomart="ensembl", dataset="mmusculus_gene_ensembl", mirror = "useast"))
+#	try(all.genes <- getBM(attributes = c("ensembl_gene_id","hgnc_symbol", "chromosome_name", "start_position", "end_position", "strand"), filters = "chromosomal_region", values = loc, mart = ensembl))#
 
-all.genes <- getBM(attributes = c("ensembl_gene_id","hgnc_symbol", "chromosome_name", "start_position", "end_position", "strand"), filters = "chromosomal_region", values = loc, mart = ensembl)
-all.genes
+#} else {
+#	host == 'Other' 
+#	all.genes <- ''
+#}
+
+
+#ensembl = userMart("ensembl") 
+#ensembl = useDataset("mmusculus_gene_ensembl",mart = ensembl)
+
+all.genes = ''
+
+#all.genes <- getBM(attributes = c("ensembl_gene_id","hgnc_symbol", "chromosome_name", "start_position", "end_position", "strand"), filters = "chromosomal_region", values = loc, mart = ensembl)
+#all.genes
 write.csv(all.genes, file= 'genes.csv')
 
 

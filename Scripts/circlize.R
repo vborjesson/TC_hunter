@@ -48,19 +48,21 @@ construct <- data.table::fread(construct_path, data.table = F)
 #construct_path = '/jumbo/WorkingDir/B19-001/Intermediate/FINAL_M42/construct.txt'
 #sample_name = "sample1"
 
-#links <- data.table::fread("links.txt", data.table = F)
-#sup_links <- data.table::fread("sup_links.txt", data.table = F)
+#links <- data.table::fread("PPM1D_M45_links.txt", data.table = F)
+#sup_links <- data.table::fread("PPM1D_M45_sup_links.txt", data.table = F)
 #karyo <- data.table::fread("tmp_karyotype.txt", data.table = F)
 #genes <- data.table::fread("genes.csv", data.table = F) 
-#construct <- data.table::fread('construct.txt', data.table = F)
-#hist <- data.table::fread("hist.txt", data.table = F)
-#out <- args[1]
-#construct_path <- args[2]
+#construct <- data.table::fread('/jumbo/WorkingDir/B19-001/Intermediate/FINAL_M41/construct.txt', data.table = F)
+#hist <- data.table::fread("PPM1D_M45_hist.txt", data.table = F)
+#out <- '3_PPM1D_M45_circlize.pdf'
+#construct_path <- '/jumbo/WorkingDir/B19-001/Intermediate/FINAL_M41/construct.txt'
 #construct <- data.table::fread(construct_path, data.table = F)
+#sample_name <- 'PPM1D_M45'
 ####################################Only for test#####################
 
 
 chrom_name = karyo[1,1]
+construct_pos = length(karyo$V1)
 construct_name = karyo[2,1]
 
 hist_split <- split(hist, hist$V1)
@@ -68,30 +70,52 @@ hist_split <- split(hist, hist$V1)
 hist_chrom <- hist_split[[chrom_name]]
 hist_construct <- hist_split[[construct_name]]
 
-#nrow(hist_chrom)
-#nrow(hist_construct)
+#------- Function: covert hist tab-df to circlize friendly format----
+hist_to_long2 <- function(d){
+	position <- as.matrix(d[,2:3])
+	position <- as.vector(t(position))
+	read_depth <- as.matrix(d[, 4])
+	read_depth <- cbind(read_depth, read_depth)
+	read_depth <- as.vector(t(read_depth))
+	
+	return(data.frame(position = position, read_depth = read_depth))	
+}
 
-# Data wrangling
-hist_to_long <- function(d){
-	a <- integer()
-	b <- integer()
-	for (i in 1:nrow(d))
-	{
-	   a <- c(a, d[i, 2], d[i, 3])
-	   b <- c(b, rep(d[i, 4], 2)) 
-	}
-	return(data.frame(position = a, read_depth = b))
-} 
-
-chrom_table <- hist_to_long(hist_chrom)
+# Run hist to long for chromosome
+chrom_table_dup <- hist_to_long2(hist_chrom)
+chrom_table <- chrom_table_dup %>% distinct()
 chrom_table$id <- chrom_name
 
-#nrow(chrom_table)
-chrom_table <- distinct(chrom_table)
-#head(chrom_table)
+print (chrom_table)
 
-construct_table <- hist_to_long(hist_construct)
+# Try to shorten the dataframe if it's more than > 5000 rows 
+space <- nrow(chrom_table) / 5000
+print (dim(chrom_table))
+
+
+print(space)
+space <- round(space, digits = -1)
+print(space)
+
+if (space > 10){
+	chrom_table_short <- chrom_table %>% filter(row_number() %% space == 1)
+	chrom_table <- chrom_table_short
+} else if (space > 0) {
+	chrom_table_short <- chrom_table %>% filter(row_number() %% space == 1)
+	chrom_table <- chrom_table_short
+} else {
+	chrom_table <- chrom_table
+}
+
+print (dim(chrom_table))
+
+
+
+# Run hist to long for construct
+construct_table_dup <- hist_to_long2(hist_construct)
+construct_table <- construct_table_dup %>% distinct()
 construct_table$id <- construct_name
+
 
 df <- rbind(chrom_table, construct_table)
 
@@ -227,6 +251,7 @@ text(-1,-1, "-", adj = 0, col = 'red', cex=3)
 text(-0.92,-1, "Anchor read", adj = 0)
 text(-1,-1.05, "-", adj = 0, cex=3)
 text(-0.92,-1.05, "Soft clipped (chimeric) read", adj = 0)
+
 
 
 dev.off()

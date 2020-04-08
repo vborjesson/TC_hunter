@@ -57,7 +57,7 @@ def create_txt (sam_file):
 		for line in f_in:
 			sam_tab = line.split('\t')
 
-			# sort out reads having map quality score below 40
+			# sort out reads having map quality score below q
 			if int(sam_tab[4]) < q:
 				continue 
 

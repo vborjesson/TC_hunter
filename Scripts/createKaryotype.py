@@ -3,7 +3,7 @@
 '''
 Part of TC-hunter
 Description: Takes an sam file with softclipped reads (created by runSoftClipExtraction.sh) as input and extract 
-reads with map quality equal to or above 60. The script creates an txt file containing candidate breakpoint positions.   
+reads with map quality equal to or Q. The script creates an txt file containing candidate breakpoint positions.   
 Date: 2019-01-25
 Author: Vanja Boerjesson
 Usage: python karyotype.py --links links.txt 
@@ -22,7 +22,7 @@ parser = argparse.ArgumentParser(description=usage)
 
 parser.add_argument('--links', dest='links', help = 'links.txt', required=True)
 parser.add_argument('--construct_length', dest='length', help = 'Length of the construct', required=True)
-parser.add_argument('--threshold', dest='thres', help = 'The number of links that most exist for one region to be reported', default=  2, required=False)
+parser.add_argument('--threshold', dest='thres', help = 'The number of links that most exist for one region to be reported', default=  1, required=False)
 
 args = parser.parse_args()
 
