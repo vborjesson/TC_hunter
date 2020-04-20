@@ -1,7 +1,0 @@
-chr5 <- data.table::fread(args[1], data.table = F)
-wip <- data.table::fread(args[1], data.table = F)
-links <- data.table::fread(args[1], data.table = F)
-sup_links <- data.table::fread(args[1], data.table = F)
-karyo <- data.table::fread(args[1], data.table = F)
-genes <- data.table::fread(args[1], data.table = F) 
-construct <- data.table::fread(args[1], data.table = F)

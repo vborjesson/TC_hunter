@@ -153,6 +153,7 @@ karyotype_out.into {
 combined_bam_karyotype = bwa_mem_out_hist.cross(karyotype_out_hist).map{
         it ->  [it[0][0],it[0][1],it[0][2],it[1][1]]
 }
+
 process create_histogram {
 	publishDir params.workingDir, mode: 'copy'
 	errorStrategy 'ignore'
@@ -161,9 +162,6 @@ process create_histogram {
 
 	input:
 		set ID, file(bam), file(bai), karyo from combined_bam_karyotype 
-		//set ID, file(bam), file(bai) from bwa_mem_out_hist		
-		//file "${ID}_karyotype.txt" from karyotype_out_hist
-		//set file(karyo_file), ID, file(bam), file(bai) from karyotype_out_hist
 
 	output:
 		set ID, "${ID}_hist.txt" into hist_out	
@@ -196,8 +194,7 @@ process create_plots {
 	publishDir params.workingDir, mode: 'copy', overwrite: true
 	errorStrategy 'ignore'
 
-	module "igv"
-	module "R/3.5.1"
+	module "R/3.5"
 
 	input:
 

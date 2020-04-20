@@ -1,10 +1,11 @@
 #!/usr/bin/env Rscript
 
 if (!require('circlize')) install.packages('circlize'); library('circlize')
+if (!require('dplyr')) install.packages('dplyr'); library('dplyr')
+if (!require('data.table')) install.packages('data.table'); library('data.table')
+
 
 ##########################################
-
-library(dplyr)
 
 args = commandArgs(trailingOnly=TRUE)
 options(warn=-1)

@@ -36,12 +36,29 @@ TC_hunter_BWA accepts raw pair end fastq files (from one or several samples) as 
 Clone the repository from Github and put it in your path (or add the direct path to config file) 
 ```
 $ git clone https://github.com/vborjesson/TC_hunter.git
+$ export PATH="/home/yourPath/TC_hunter":$PATH
+$ source ~/.bashrc
 ```
 
 Install required programs and tools using Anaconda
 ```
 $ conda env create --file TC_hunter/Scripts/TC_hunter.yml
+$ source activate TC_hunter
 ```
+
+## Create construct.txt
+
+In order to generate figures with construct information, you need to add that info. 
+Create a txt-file with gene info per line, separated by space. The info should be; 1) name, 2) start position and 3) end position. 
+
+e.g.
+```   
+Amp 1 500   
+lyz 1000 1200       
+Gene1 2000 5000		      
+Gene2 7000 7700	     		
+```
+
 
 ## Make Configuration file 
 
@@ -51,6 +68,7 @@ $ cp TC_hunter/template/TC_hunter.config /path/to/WorkingDir
 ```
 
 Add required information to config file
+
 ### TC_hunter.nf
 
 | Argument  | Usage | Description |
@@ -81,20 +99,6 @@ e. g. [example.config](https://github.com/vborjesson/TC_hunter/blob/master/templ
 | construct_ref | <construct_ref.fa> | Path to construct reference file |
 
 e. g. [example.config](https://github.com/vborjesson/TC_hunter/blob/master/template/tchunter_BWA_example.config)
-
-### Create construct.txt
-
-In order to generate figures with construct information, you need to add that info. 
-Create a file with the gene info per line, separated by simple single space. The info should be; 1) name, 2) start position and 3) end position. 
-
-e.g.
-```   
-Amp 1 500   
-lyz 1000 1200       
-Gene1 2000 5000		      
-Gene2 7000 7700	     		
-```
-
 
 ## Run TC_hunter.nf
 

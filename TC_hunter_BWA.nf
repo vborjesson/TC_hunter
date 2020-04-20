@@ -98,7 +98,7 @@ process create_links_sup {
 		set ID, bam, bai from bwa_mem_out_links
 
 	output:
-		file "${ID}_sup_links.txt" into sup_links	
+		set ID, "${ID}_sup_links.txt" into sup_links	
 
 	script:
 		"""
@@ -122,7 +122,6 @@ process create_links_soft {
 
 	output:
 		set ID, "${ID}_links.txt" into links_out
-		file "${ID}_links.txt" into links_plot
 
 	script:
 	"""
@@ -137,6 +136,7 @@ process create_links_soft {
 links_out.into {
   	links_out_karyo
 	links_out_circos
+	links_out_plot
 }
 
 
@@ -150,7 +150,7 @@ process create_karyotype {
 		set ID, file(links) from links_out_karyo
 
 	output:
-		file "${ID}_karyotype.txt" into karyotype_out
+		set ID, file("${ID}_karyotype.txt") into karyotype_out
 
 	script:
 	"""
@@ -171,6 +171,9 @@ karyotype_out.into {
 
 //----------------------Create histogram file-------------------------------
 
+combined_bam_karyotype = bwa_mem_out_hist.cross(karyotype_out_hist).map{
+        it ->  [it[0][0],it[0][1],it[0][2],it[1][1]]
+}
 
 process create_histogram {
 	publishDir params.workingDir, mode: 'copy'
@@ -179,12 +182,10 @@ process create_histogram {
 	module 'samtools/1.9'
 
 	input:
-		set ID, file(bam), file(bai) from bwa_mem_out_hist		
-		file "${ID}_karyotype.txt" from karyotype_out_hist
-		//set file(karyo_file), ID, file(bam), file(bai) from karyotype_out_hist
-
+		set ID, file(bam), file(bai), karyo from combined_bam_karyotype 
+	
 	output:
-		file "${ID}_hist.txt" into hist_out	
+		set ID, "${ID}_hist.txt" into hist_out	
 
 	script:
 
@@ -197,29 +198,38 @@ process create_histogram {
 
 //----------------------Cretae Plots-------------------------------
 
+combined_bam_karyotype2 = bwa_mem_out_plots.cross(karyotype_out_circos).map{
+        it ->  [it[0][0],it[0][1],it[0][2],it[1][1]]
+}
+combined_2 = combined_bam_karyotype2.cross(links_out_plot).map{
+        it ->  [it[0][0],it[0][1],it[0][2],it[0][3],it[1][1]]
+}
+combined_3 = combined_2.cross(hist_out).map{
+        it ->  [it[0][0],it[0][1],it[0][2],it[0][3],it[0][4],it[1][1]]
+}
+combined_all = combined_3.cross(sup_links).map{
+        it ->  [it[0][0],it[0][1],it[0][2],it[0][3],it[0][4],it[0][5],it[1][1]]
+}
+
 process create_plots {
 	publishDir params.workingDir, mode: 'copy', overwrite: true
 	errorStrategy 'ignore'
 
-	module "R/3.5.1"
-	module "igv"
+	module "R/3.5"
 
 	input:
-		//set name, links from links_out_circos
-		set ID, bam, bai from bwa_mem_out_plots
-		file "${ID}_links.txt" from links_plot
-		file "${ID}_karyotype.txt" from karyotype_out_circos
-		file "${ID}_hist.txt" from hist_out 
-		file "${ID}_sup_links.txt" from sup_links
-		file ref from bwa_mem_out_ref
-		//file jointRef from bwa_mem_out_ref
+		set ID, bam, bai, karyo, links, hist, sup_links from combined_all
 
 	output:
 		file "${ID}_output.html" into plots_out  
 
 	script:
 	"""	
-		python ${params.tc_hunter_path}/Scripts/createOutput.py --hist ${ID}_hist.txt --links ${ID}_links.txt --sup_links ${ID}_sup_links.txt --karyo ${ID}_karyotype.txt --construct $construct_file --WorkDir ${params.workingDir} --tchunter ${params.tc_hunter_path} --bam $bam --ref $ref --name ${ID}
+		cp ${links} .
+		cp ${karyo} .
+		cp ${hist} .
+		cp ${sup_links} .
+		python ${params.tc_hunter_path}/Scripts/createOutput.py --hist ${hist} --links ${links} --sup_links ${sup_links} --karyo ${karyo} --construct $construct_file --WorkDir ${params.workingDir} --tchunter ${params.tc_hunter_path} --bam ${bam} --ref ${params.reference} --name ${ID}
 		cp *pdf ${params.workingDir} || :
 		cp *png ${params.workingDir} || :
 	"""				
@@ -248,3 +258,6 @@ process create_html {
 		cat ${params.tc_hunter_path}/template/tail.txt >> output_summary.html
 	"""				
 }
+
+
+

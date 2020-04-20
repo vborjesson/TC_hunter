@@ -8,7 +8,7 @@ loc <- args[1] # region to look for genes within
 
 #host <- 'mouse'
 
-library(biomaRt)
+#library(biomart)
 
 #print('start ')#
 
