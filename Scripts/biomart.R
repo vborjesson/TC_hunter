@@ -2,11 +2,11 @@
 
 # Create list of genes found within region 
 # usage: Rscript biomart.R chrom:pos_start:pos_end
-
+#if (!require('biomaRt')) install.packages('biomaRt'); library('biomaRt')
 args = commandArgs(trailingOnly=TRUE)
 loc <- args[1] # region to look for genes within
 
-#host <- 'mouse'
+host <- 'mouse'
 
 #library(biomart)
 

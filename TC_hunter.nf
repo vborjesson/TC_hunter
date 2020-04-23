@@ -15,7 +15,7 @@ process samtools_index {
 	publishDir workingdirectory, mode: 'copy', overwrite: true
 	errorStrategy 'ignore'
 
-	module 'samtools/0.1.19'
+//	module 'samtools/0.1.19'
 
 	input:
 		set ID, bam from sequences 
@@ -48,7 +48,7 @@ process extract_reads_bwa {
 	publishDir workingdirectory, mode: 'copy', overwrite: true
 	errorStrategy 'ignore'
 
-	module 'samtools/1.9'
+//	module 'samtools/1.9'
 
 	input:
 		set ID, bam, bai from bwa_mem_out_extractReads
@@ -72,7 +72,7 @@ process create_links_sup {
 	publishDir workingdirectory, mode: 'copy', overwrite: true
 	errorStrategy 'ignore'
 
-	module 'samtools/1.9'
+//	module 'samtools/1.9'
 
 	input:
 		set ID, bam, bai from bwa_mem_out_links
@@ -158,7 +158,7 @@ process create_histogram {
 	publishDir params.workingDir, mode: 'copy'
 	errorStrategy 'ignore'
 
-	module 'samtools/1.9'
+//	module 'samtools/1.9'
 
 	input:
 		set ID, file(bam), file(bai), karyo from combined_bam_karyotype 
@@ -194,18 +194,11 @@ process create_plots {
 	publishDir params.workingDir, mode: 'copy', overwrite: true
 	errorStrategy 'ignore'
 
-	module "R/3.5"
+//	module "R/3.5.1"
 
 	input:
 
 		set ID, bam, bai, karyo, links, hist, sup_links from combined_all
-		//set name, links from links_out_circos
-		//set ID, bam, bai from bwa_mem_out_plots
-		//file "${ID}_links.txt" from links_plot
-		//file "${ID}_karyotype.txt" from karyotype_out_circos
-		//file "${ID}_hist.txt" from hist_out 
-		//file "${ID}_sup_links.txt" from sup_links
-		//file jointRef from bwa_mem_out_ref
 
 	output:
 		file "${ID}_output.html" into plots_out  

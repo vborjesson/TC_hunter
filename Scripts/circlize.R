@@ -87,16 +87,16 @@ chrom_table_dup <- hist_to_long2(hist_chrom)
 chrom_table <- chrom_table_dup %>% distinct()
 chrom_table$id <- chrom_name
 
-print (chrom_table)
+#print (chrom_table)
 
 # Try to shorten the dataframe if it's more than > 5000 rows 
 space <- nrow(chrom_table) / 5000
-print (dim(chrom_table))
+#print (dim(chrom_table))
 
 
-print(space)
+#print(space)
 space <- round(space, digits = -1)
-print(space)
+#print(space)
 
 if (space > 10){
 	chrom_table_short <- chrom_table %>% filter(row_number() %% space == 1)
@@ -108,7 +108,7 @@ if (space > 10){
 	chrom_table <- chrom_table
 }
 
-print (dim(chrom_table))
+#print (dim(chrom_table))
 
 
 
