@@ -6,7 +6,7 @@
 args = commandArgs(trailingOnly=TRUE)
 loc <- args[1] # region to look for genes within
 
-host <- 'mouse'
+#host <- 'mouse'
 
 #library(biomart)
 

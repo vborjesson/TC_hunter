@@ -182,7 +182,7 @@ process create_histogram {
 	module 'samtools/1.9'
 
 	input:
-		set ID, file(bam), file(bai), karyo from combined_bam_karyotype 
+		set ID, file(bam), file(bai), file(karyo) from combined_bam_karyotype 
 	
 	output:
 		set ID, "${ID}_hist.txt" into hist_out	
@@ -215,7 +215,7 @@ process create_plots {
 	publishDir params.workingDir, mode: 'copy', overwrite: true
 	errorStrategy 'ignore'
 
-	module "R/3.5"
+//	module "R/3.5"
 
 	input:
 		set ID, bam, bai, karyo, links, hist, sup_links from combined_all
