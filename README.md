@@ -17,19 +17,7 @@ TC_hunter_BWA accepts raw pair end fastq files (from one or several samples) as 
 
 ![](Plots/TC_hunter_pipeline.png)
 
-
-
-
-
-
-## Software Dependencies
-
-* Nextflow v.19.01.0          		           		     
-* BWA MEM v.0.7.5a (only if you run TC_hunter_BWA.nf)              	         		
-* Samtools v.1.9                	   	    		
-* R v.3.5.1          			      
-* python v.2.7.11        					             	        	    	
-* igv v.2.1.7 (You can choose to run this separately fom the pipeline)        	          			
+      	          			
 
 ## Install TC-hunter 
 
@@ -40,11 +28,48 @@ $ export PATH="/home/yourPath/TC_hunter":$PATH
 $ source ~/.bashrc
 ```
 
-Install required programs and tools using Anaconda
+## Software Dependencies
+
+In order to run TC_hunter you need to have some programs installed. Here's three options on how you can do it: 
+
+1. Install required programs and tools using Anaconda yml-file (prefered)
 ```
 $ conda env create --file TC_hunter/Scripts/TC_hunter.yml
 $ source activate TC_hunter
 ```
+
+2. Create your own conda environment 
+```
+$ conda create -n TC_hunter R=3.5
+$ source activate TC_hunter
+$ conda install -c bioconda samtools=1.10
+$ conda install -c bioconda nextflow=19.01.0
+(only if runing TC_hunter_BWA) $ conda install -c bioconda bwa
+$ conda install -c anaconda pandas
+$ conda install -c conda-forge r-circlize
+$ conda install -c r r-dplyr
+$ conda install -c r r-data.table
+```
+
+3. Download manually
+
+softwares
+```
+R 3.5 or higher
+python 2.7
+samtools 1.10 (works on other versions as well)
+nextflow 19.01.0
+bwa 0.7
+```
+
+R packages 
+```
+circlize
+dplyr
+data.table
+```
+
+
 
 ## Create construct.txt
 
