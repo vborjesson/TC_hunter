@@ -32,7 +32,7 @@ process bwa_mem {
 	publishDir workingdirectory, mode: 'copy', overwrite: true
 	errorStrategy 'ignore'
 
-	module 'bwa/0.7.5a:samtools/0.1.19'
+//	module 'bwa/0.7.5a:samtools/0.1.19'
 
 	input:
 		set ID, path from fastq_path 
@@ -69,7 +69,7 @@ process extract_reads_bwa {
 	publishDir workingdirectory, mode: 'copy', overwrite: true
 	errorStrategy 'ignore'
 
-	module 'samtools/1.9'
+//	module 'samtools/1.9'
 
 	input:
 		set ID, bam, bai from bwa_mem_out_extractReads
@@ -92,7 +92,7 @@ process create_links_sup {
 	publishDir workingdirectory, mode: 'copy', overwrite: true
 	errorStrategy 'ignore'
 
-	module 'samtools/1.9'
+//	module 'samtools/1.9'
 
 	input:
 		set ID, bam, bai from bwa_mem_out_links
@@ -179,7 +179,7 @@ process create_histogram {
 	publishDir params.workingDir, mode: 'copy'
 	errorStrategy 'ignore'
 
-	module 'samtools/1.9'
+//	module 'samtools/1.9'
 
 	input:
 		set ID, file(bam), file(bai), file(karyo) from combined_bam_karyotype 

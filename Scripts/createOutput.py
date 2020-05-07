@@ -413,8 +413,7 @@ def find_construct_bp (links, host_chr, host_bp1, host_bp2):
 ########################################### Find most frequent number bp ###########################################
 
 def most_frequent(List): 
-	print ('------------------------') 
-	print('Heres the failing list: ', List)
+
 	counter = 0
 	num = List[0]
 
