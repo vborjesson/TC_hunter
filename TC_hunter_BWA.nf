@@ -48,7 +48,7 @@ process bwa_mem {
 		cat ${params.construct_ref} >> JointRefGenome.fasta
 		bwa index JointRefGenome.fasta
 		bwa mem -t 8 JointRefGenome.fasta ${path}/*R1* ${path}/*R2* | samtools view -Sb - >  ${ID}.bam	
-		samtools sort ${ID}.bam ${ID}_sorted
+		samtools sort -o ${ID}_sorted.bam ${ID}.bam
 		samtools index ${ID}_sorted.bam	
 	
 	"""		

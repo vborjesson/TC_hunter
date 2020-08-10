@@ -2,8 +2,8 @@
 
 '''
 Part of TC-hunter
-Description: Takes an sam file with softclipped reads (created by runSoftClipExtraction.sh) as input and extract 
-reads with map quality above 40. The script creates an txt file containing candidate breakpoint positions.   
+Description: Takes a sam file with softclipped reads (created by runSoftClipExtraction.sh) as input and extract 
+reads with map quality above 60. The script creates an txt file containing candidate breakpoint positions.   
 Date: 2019-01-22
 Author: Vanja Boerjesson
 Usage: python cand_insite.py --sam 
@@ -61,11 +61,15 @@ def create_txt (sam_file):
 			if int(sam_tab[4]) < q:
 				continue 
 
-			sa = sam_tab[14]	
-			sa_sep_com = sa.split(',') 
+			# Get SA information from sam file, column number can vary.	
+			sa = [i for i in sam_tab if i.startswith('SA')]	
+
+			print(sa)
+			sa_sep_com = sa[0].split(',') 
 			
 			if int(sa_sep_com[4]) < q:
 				continue
+
 			sa_sep_col = sa_sep_com[0].split(':')
 			#print (sa_sep_com[4])
 			chrom1 = sam_tab[2]

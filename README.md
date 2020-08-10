@@ -35,7 +35,7 @@ In order to run TC_hunter you need to have some programs installed. Here's three
 1. Install required programs and tools using Anaconda yml-file (prefered)
 ```
 $ conda env create --file TC_hunter/Scripts/TC_hunter.yml
-$ source activate TC_hunter
+$ source activate TC_hunter_v1.0
 ```
 
 2. Create your own conda environment 
