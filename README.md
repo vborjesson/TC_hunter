@@ -6,25 +6,7 @@ TC-hunter searches for transgenic insertion sites in a host genome and returns f
 
 There's two programs; **TC_hunter** and **TC_hunter_BWA**. 
 
-<body>
-  <p style="color:#FFA500";>Red paragraph text</p>
-</body>
-<!DOCTYPE html>
-
-<html>
-<body>
-
-<p>I am normal</p>
-<p style="color:red;">I am red</p>
-<p style="color:blue;">I am blue</p>
-<p style="font-size:50px;">I am big</p>
-
-</body>
-</html>
-
-
-
-- ![#ffcc33](https://placehold.it/15/ffcc33/000000?text=+) **TC_hunter.nf**
+- ![#ffcc33](https://placehold.it/15/ffcc33/000000?text=+) :large_blue_diamond: **TC_hunter.nf**
 
 Accepts one or several aligned BAM files (mapped to both host and transgenic sequence) as input. 
 TC-hunter then identifies anchors and chimeric reads that maps to both host and transgenig sequence.    
