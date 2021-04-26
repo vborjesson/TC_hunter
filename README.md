@@ -6,13 +6,17 @@ TC-hunter searches for transgenic insertion sites in a host genome and returns f
 
 There's two programs; **TC_hunter** and **TC_hunter_BWA**. 
 
-```diff
-- text in red
-+ text in green
-! text in orange
-# text in gray
-@@ text in purple (and bold)@@
-```
+<div class="text-blue mb-2">
+  .text-blue on white
+</div>
+
+<div class="text-green mb-2 ml-4">
+  .text-green on white
+</div>
+
+<div class="bg-yellow-light mb-2">
+  .text-gray-dark on .bg-yellow-light
+</div>
 
 - ![#ffcc33](https://placehold.it/15/ffcc33/000000?text=+) **TC_hunter.nf**
 
