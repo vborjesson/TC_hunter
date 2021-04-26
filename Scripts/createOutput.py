@@ -8,19 +8,6 @@ figures (pdf).
 Date: 2019-01-29
 Author: Vanja Boerjesson
 Usage: python createOutput.py --hist hist.txt --links links.txt --sup_links sup_links.txt --karyo karyotype.txt --construct construct.csv 
-
-
-test run on simulated data.
-	
-#!/bin/bash -ue
-python /jumbo/WorkingDir/B19-001/TC_hunter/Scripts/createOutput.py --hist hist.txt --links links.txt --sup_links 
-sup_links.txt --karyo karyotype.txt --construct /jumbo/WorkingDir/B19-001/Intermediate/tc_wgsim/construct.txt 
---WorkDir /jumbo/WorkingDir/B19-001/Intermediate/wgsim_2insite/tc_hunter --tchunter /jumbo/WorkingDir/B19-001/TC_hunter 
---bam /jumbo/WorkingDir/B19-001/Intermediate/wgsim_2insite/tc_hunter/BWA_sorted.bam 
---ref /jumbo/WorkingDir/B19-001/Intermediate/wgsim_2insite/tc_hunter/JointRefGenome.fasta
-
-
-
 '''
 
 import sys
