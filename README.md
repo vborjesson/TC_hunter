@@ -6,8 +6,13 @@ TC-hunter searches for transgenic insertion sites in a host genome and returns f
 
 There's two programs; **TC_hunter** and **TC_hunter_BWA**. 
 
-<h3 style="color:#ffcc33">Danger</h3>
-- ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) `#f03c15`
+```diff
+- text in red
++ text in green
+! text in orange
+# text in gray
+@@ text in purple (and bold)@@
+```
 
 - ![#ffcc33](https://placehold.it/15/ffcc33/000000?text=+) **TC_hunter.nf**
 
