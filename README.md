@@ -10,6 +10,16 @@ There's two programs; **TC_hunter** and **TC_hunter_BWA**.
   <p style="color:#FFA500";>Red paragraph text</p>
 </body>
 
+<html>
+<body>
+
+<p>I am normal</p>
+<p style="color:red;">I am red</p>
+<p style="color:blue;">I am blue</p>
+<p style="font-size:50px;">I am big</p>
+
+</body>
+</html>
 
 
 
