@@ -11,7 +11,6 @@ There's two programs; **TC_hunter** and **TC_hunter_BWA**.
 </body>
 ```
 
-```html
 <h2>Example of code</h2>
 
 <pre>
@@ -24,7 +23,7 @@ There's two programs; **TC_hunter** and **TC_hunter_BWA**.
         </div>
     </div>
 </pre>
-```
+
 
 - ![#ffcc33](https://placehold.it/15/ffcc33/000000?text=+) **TC_hunter.nf**
 
