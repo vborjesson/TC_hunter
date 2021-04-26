@@ -9,6 +9,7 @@ There's two programs; **TC_hunter** and **TC_hunter_BWA**.
 <body>
   <p style="color:#FFA500";>Red paragraph text</p>
 </body>
+<!DOCTYPE html>
 
 <html>
 <body>
