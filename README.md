@@ -5,18 +5,13 @@
 TC-hunter searches for transgenic insertion sites in a host genome and returns figures and a report to support these findings. 
 
 There's two programs; **TC_hunter** and **TC_hunter_BWA**. 
+<style>H1{color:Blue;}</style>
+<style>H2{color:DarkOrange;}</style>
+<style>p{color:Black;}</style>
 
-<div class="text-blue mb-2">
-  .text-blue on white
-</div>
+## Second Heading
 
-<div class="text-green mb-2 ml-4">
-  .text-green on white
-</div>
-
-<div class="bg-yellow-light mb-2">
-  .text-gray-dark on .bg-yellow-light
-</div>
+This is a test to see how the colors work.
 
 - ![#ffcc33](https://placehold.it/15/ffcc33/000000?text=+) **TC_hunter.nf**
 
