@@ -5,24 +5,12 @@
 TC-hunter searches for transgenic insertion sites in a host genome and returns figures and a report to support these findings. 
 
 There's two programs; **TC_hunter** and **TC_hunter_BWA**. 
-```html
+
 <body>
   <p style="color:#FF0000";>Red paragraph text</p>
 </body>
-```
 
-<h2>Example of code</h2>
 
-<pre>
-    <div class="container">
-        <div class="block two first">
-            <h2>Your title</h2>
-            <div class="wrap">
-            //Your content
-            </div>
-        </div>
-    </div>
-</pre>
 
 
 - ![#ffcc33](https://placehold.it/15/ffcc33/000000?text=+) **TC_hunter.nf**
