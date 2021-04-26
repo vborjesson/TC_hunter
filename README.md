@@ -6,12 +6,12 @@ TC-hunter searches for transgenic insertion sites in a host genome and returns f
 
 There's two programs; **TC_hunter** and **TC_hunter_BWA**. 
 
-- :large_green_diamond: **TC_hunter.nf**
+- :green_square: **TC_hunter.nf**
 
 Accepts one or several aligned BAM files (mapped to both host and transgenic sequence) as input. 
 TC-hunter then identifies anchors and chimeric reads that maps to both host and transgenig sequence.    
 
-- :large_yellow_diamond: **TC_hunter_BWA.nf**
+- :yellow_square: **TC_hunter_BWA.nf**
 
 TC_hunter_BWA accepts raw pair end fastq files (from one or several samples) as input and performes BWA MEM alignment before searching for trasgenic insertion site.       
 
