@@ -50,7 +50,6 @@ process bwa_mem {
 		bwa mem -t 8 JointRefGenome.fasta ${path}/*R1* ${path}/*R2* | samtools view -Sb - >  ${ID}.bam	
 		samtools sort -o ${ID}_sorted.bam ${ID}.bam
 		samtools index ${ID}_sorted.bam	
-	
 	"""		
 }
 
@@ -211,6 +210,9 @@ combined_all = combined_3.cross(sup_links).map{
         it ->  [it[0][0],it[0][1],it[0][2],it[0][3],it[0][4],it[0][5],it[1][1]]
 }
 
+
+jointref_path = workingdirectory+'/JointRefGenome.fasta'
+
 process create_plots {
 	publishDir params.workingDir, mode: 'copy', overwrite: true
 	errorStrategy 'ignore'
@@ -229,7 +231,7 @@ process create_plots {
 		cp ${karyo} .
 		cp ${hist} .
 		cp ${sup_links} .
-		python ${params.tc_hunter_path}/Scripts/createOutput.py --hist ${hist} --links ${links} --sup_links ${sup_links} --karyo ${karyo} --construct $construct_file --WorkDir ${params.workingDir} --tchunter ${params.tc_hunter_path} --bam ${bam} --ref ${params.reference} --name ${ID}
+		python ${params.tc_hunter_path}/Scripts/createOutput.py --hist ${hist} --links ${links} --sup_links ${sup_links} --karyo ${karyo} --construct $construct_file --WorkDir ${params.workingDir} --tchunter ${params.tc_hunter_path} --bam ${bam} --ref $jointref_path --name ${ID}
 		cp *pdf ${params.workingDir} || :
 		cp *png ${params.workingDir} || :
 	"""				
