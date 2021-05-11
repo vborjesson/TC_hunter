@@ -153,7 +153,7 @@ process create_karyotype {
 
 	script:
 	"""
-		python ${params.tc_hunter_path}/Scripts/createKaryotype.py --links ${links} --construct_length ${params.construct_length}  
+		python ${params.tc_hunter_path}/Scripts/createKaryotype.py --links ${links} --construct_length ${params.construct_length} --construct_name ${params.construct_name} 
 		mv karyotype.txt ${ID}_karyotype.txt 
 	"""	
 }

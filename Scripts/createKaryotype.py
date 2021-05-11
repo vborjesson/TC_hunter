@@ -13,6 +13,7 @@ import sys
 import os 
 import argparse
 import subprocess
+import collections
 
 ########################################### ARGPARSER #############################################
 
@@ -22,21 +23,16 @@ parser = argparse.ArgumentParser(description=usage)
 
 parser.add_argument('--links', dest='links', help = 'links.txt', required=True)
 parser.add_argument('--construct_length', dest='length', help = 'Length of the construct', required=True)
-parser.add_argument('--threshold', dest='thres', help = 'The number of links that most exist for one region to be reported', default=  1, required=False)
+parser.add_argument('--threshold', dest='thres', help = 'The number of links that most exist for one region to be reported', default=2, required=False)
+parser.add_argument('--construct_name', dest='construct', help = 'construct name', required=True)
 
 args = parser.parse_args()
 
 links = args.links
 length = args.length
 threshold = int(args.thres)
+construct = args.construct
 
-# Create genome list 
-
-genome = ['x', 'y', 'X', 'Y']
-for i in range (1,24):
-	genome.append(str(i))
-
-#print(genome)
 
 ##########################################    Create karyotype    ##########################################
 
@@ -58,7 +54,7 @@ def create_karyotype (links, length):
 			pos2 = list_line[4]
 
 			# see if chr1 or 2 are the construct	
-			if chr1 in genome: 
+			if chr1 != construct: 
 				#Add chr and bp position to dict
 				if chr1 in karyo_dict:
 					karyo_dict[chr1].append(pos1)
@@ -87,14 +83,39 @@ def create_karyotype (links, length):
 		# number of chrosomes: 
 		n_karyo = len (karyo_dict)	
 	
+		print (karyo_dict)
+		print (construct_dict)
+
 		# counter = 0
 		for chrom in karyo_dict:
 
 			if len(karyo_dict[chrom]) < threshold:
 				continue
 
-			bp_max = int(max(karyo_dict[chrom])) + 5000
-			bp_min = int(min(karyo_dict[chrom])) - 5000
+			print ('\n')	
+
+			sorted_pos = collections.Counter(karyo_dict[chrom]).most_common()
+			print (sorted_pos)
+			#print (karyo_dict[chrom])	
+
+			bp1 = sorted_pos[0][0]
+			bp2 = sorted_pos[1][0]
+
+			# if bp 2 is just defined by 1 read, then use the same as bp1
+			if sorted_pos[1][1] == 1:
+				bp2 = bp1
+
+			for i in sorted_pos:
+				sort1 = i[0]
+				#sort1 = i.split
+
+			print ('bp1 ', bp1)
+			print ('bp2 ', bp2)	
+
+			pos_list = [bp1, bp2]
+
+			bp_max = int(max(pos_list)) + 5000
+			bp_min = int(min(pos_list)) - 5000
 			chr_name = '{}{}'.format('chr', str(chrom))
 
 			f_out.write('{} {} {}\n'.format(chrom, bp_min, bp_max))

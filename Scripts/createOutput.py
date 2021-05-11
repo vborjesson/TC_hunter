@@ -222,7 +222,7 @@ def rank_sites (kar, links, sup_links):
 				igv_position_1 = '{}:{}-{}'.format(R_karyo[0], int(R_karyo[1])+4950, int(R_karyo[2])-4950) # long region
 				igv_position_2 = '{}:{}-{}'.format(R_karyo[0], int(R_karyo[1])+4600, int(R_karyo[2])-4600) # short region (4600 orig)
 
-				html_host_bp = '{} - {}'.format(R_karyo[1]+5001, R_karyo[2]-5000)
+				html_host_bp = '{} - {}'.format(R_karyo[1]+5000, R_karyo[2]-5000)
 
 				# Find construct break point				
 				const_bp1, const_bp2 = find_construct_bp(links, R_karyo[0], int(R_karyo[1])+5000, int(R_karyo[2])-5000)
