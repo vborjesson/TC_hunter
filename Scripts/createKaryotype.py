@@ -23,7 +23,7 @@ parser = argparse.ArgumentParser(description=usage)
 
 parser.add_argument('--links', dest='links', help = 'links.txt', required=True)
 parser.add_argument('--construct_length', dest='length', help = 'Length of the construct', required=True)
-parser.add_argument('--threshold', dest='thres', help = 'The number of links that most exist for one region to be reported', default=2, required=False)
+parser.add_argument('--threshold', dest='thres', help = 'The number of links that most exist for one region to be reported', default=1, required=False)
 parser.add_argument('--construct_name', dest='construct', help = 'construct name', required=True)
 
 args = parser.parse_args()
@@ -92,6 +92,7 @@ def create_karyotype (links, length):
 			if len(karyo_dict[chrom]) < threshold:
 				continue
 
+
 			print ('\n')	
 
 			sorted_pos = collections.Counter(karyo_dict[chrom]).most_common()
@@ -99,15 +100,19 @@ def create_karyotype (links, length):
 			#print (karyo_dict[chrom])	
 
 			bp1 = sorted_pos[0][0]
-			bp2 = sorted_pos[1][0]
 
-			# if bp 2 is just defined by 1 read, then use the same as bp1
-			if sorted_pos[1][1] == 1:
-				bp2 = bp1
+			# If only one bp
+			if len(sorted_pos) == 1:
+				bp2=bp1
 
-			for i in sorted_pos:
-				sort1 = i[0]
-				#sort1 = i.split
+			# if several bp	
+			else:	
+				bp2 = sorted_pos[1][0] # second most common
+				# if bp 2 is just defined by 1 read, then use the same as bp1
+				if sorted_pos[1][1] == 1:
+					if sorted_pos[0][1] > 3:
+						bp2 = bp1			
+
 
 			print ('bp1 ', bp1)
 			print ('bp2 ', bp2)	
