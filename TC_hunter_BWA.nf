@@ -6,6 +6,7 @@ construct_file = file(params.construct_file)
 params.folder = ""
 params.sample = ""
 
+
 // Channel all samples from folder in order to parallelize longranger
 if (params.folder) {
 	String character = "/*";
@@ -15,6 +16,7 @@ if (params.folder) {
 }
 
 // If just one sample; no channels are needed
+
 if (params.sample) {
 	String character = "/*";
 	String folder_path = params.sample;
@@ -35,7 +37,7 @@ process bwa_mem {
 //	module 'bwa/0.7.5a:samtools/0.1.19'
 
 	input:
-		set ID, path from fastq_path 
+		set ID, path from fastq_path
 
 	output:
 		set ID, "${ID}_sorted.bam", "${ID}_sorted.bam.bai" into bwa_mem_out	
@@ -47,7 +49,7 @@ process bwa_mem {
 		cat ${params.host_reference} > JointRefGenome.fasta
 		cat ${params.construct_ref} >> JointRefGenome.fasta
 		bwa index JointRefGenome.fasta
-		bwa mem -t 8 JointRefGenome.fasta ${path}/*R1* ${path}/*R2* | samtools view -Sb - >  ${ID}.bam	
+		bwa mem -t ${params.bwa_threads} JointRefGenome.fasta ${path}/*R1* ${path}/*R2* | samtools view -Sb - >  ${ID}.bam	
 		samtools sort -o ${ID}_sorted.bam ${ID}.bam
 		samtools index ${ID}_sorted.bam	
 	"""		
@@ -234,6 +236,8 @@ process create_plots {
 		python ${params.tc_hunter_path}/Scripts/createOutput.py --hist ${hist} --links ${links} --sup_links ${sup_links} --karyo ${karyo} --construct $construct_file --WorkDir ${params.workingDir} --tchunter ${params.tc_hunter_path} --bam ${bam} --ref $jointref_path --name ${ID}
 		cp *pdf ${params.workingDir} || :
 		cp *png ${params.workingDir} || :
+		mkdir ${params.workingDir}/${ID}_meta_data
+		mv ${params.workingDir}/${ID}_* ${params.workingDir}/${ID}_meta_data/			
 	"""				
 }
 
@@ -257,9 +261,14 @@ process create_html {
 	"""
 		cat ${params.tc_hunter_path}/template/header.html > output_summary.html
 		cat *_output.html >> output_summary.html
-		cat ${params.tc_hunter_path}/template/tail.txt >> output_summary.html
+		cat ${params.tc_hunter_path}/template/tail.txt >> output_summary.html		
 	"""				
 }
+
+
+
+
+
 
 
 
