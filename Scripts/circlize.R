@@ -93,12 +93,12 @@ chrom_table$id <- chrom_name
 
 # Try to shorten the dataframe if it's more than > 5000 rows 
 space <- nrow(chrom_table) / 5000
-print (dim(chrom_table))
+#print (dim(chrom_table))
 
 
-print(space)
+
 space <- round(space, digits = -1)
-print(space)
+
 
 if (space > 10){
 	chrom_table_short <- chrom_table %>% filter(row_number() %% space == 1)
@@ -109,8 +109,6 @@ if (space > 10){
 } else {
 	chrom_table <- chrom_table
 }
-
-print (dim(chrom_table))
 
 
 
@@ -123,10 +121,10 @@ construct_table$id <- construct_name
 df <- rbind(chrom_table, construct_table)
 
 #head(chrom_table)
-head(df)
+#head(df)
 #max_h <- max(chrom_table$read_depth)
 max_h <- max(df$read_depth)
-print(max_h)
+#print(max_h)
 
 #circos.initializeWithIdeogram(plotType = NULL)
 
@@ -230,8 +228,8 @@ circos.lines(chrom_table$position, chrom_table$read_depth, sector.index = chrom_
 
 
 # links
-head(sup_links)
-head(links)
+#head(sup_links)
+#head(links)
 
 for (i in 1:nrow(sup_links)){
 	tryCatch({
