@@ -28,7 +28,9 @@ options(warn=-1)
 #opt_parser = OptionParser(option_list=option_list);
 #opt = parse_args(opt_parser);
 
+
 sample_name <- args[3]
+
 
 # Load data
 links <- data.table::fread(paste(sample_name, "_links.txt", sep=""), data.table = F)
@@ -91,12 +93,12 @@ chrom_table$id <- chrom_name
 
 # Try to shorten the dataframe if it's more than > 5000 rows 
 space <- nrow(chrom_table) / 5000
-#print (dim(chrom_table))
+print (dim(chrom_table))
 
 
-#print(space)
+print(space)
 space <- round(space, digits = -1)
-#print(space)
+print(space)
 
 if (space > 10){
 	chrom_table_short <- chrom_table %>% filter(row_number() %% space == 1)
@@ -108,7 +110,7 @@ if (space > 10){
 	chrom_table <- chrom_table
 }
 
-#print (dim(chrom_table))
+print (dim(chrom_table))
 
 
 
@@ -121,9 +123,10 @@ construct_table$id <- construct_name
 df <- rbind(chrom_table, construct_table)
 
 #head(chrom_table)
-#head(df)
+head(df)
 #max_h <- max(chrom_table$read_depth)
 max_h <- max(df$read_depth)
+print(max_h)
 
 #circos.initializeWithIdeogram(plotType = NULL)
 
@@ -149,15 +152,21 @@ circos.genomicInitialize(karyo, tickLabelsStartFromZero = FALSE, axis.labels.cex
 circos.track(factors = df$id, ylim = c(0, 2), bg.col = c("#BDBDBD", "#8A0808"), track.height=0.02, cell.padding=c(0,0,0,0))
 #circos.track(factors = genes$chromosome_name, ylim = c(0, 2), bg.col = c("#D9681D", "#15576D"), track.height=0.02, cell.padding=c(0,0,0,0))
 
+
+
 # Initiate construct tracks
 circos.track(df$id, ylim=c(0,1), track.height=0.015, cell.padding=c(0,0,0,0), bg.border = 'white')
 circos.track(df$id, ylim=c(0,1), track.height=0.015, cell.padding=c(0,0,0,0), bg.border = 'white')
 
+
+
 # Plot construct
 for (pos in 1:nrow(construct)){
+	print(pos)
 	circos.rect(construct[pos,2], 0, construct[pos,3]-30, 1, sector.index = construct_name, col='black', track.index=3)
 	circos.text(((construct[pos,2]+construct[pos,3])/2), 0.5, labels= construct[pos, 1], cex= 1.2, track.index=4, bg.border = 'white', facing= 'bending.inside')
 }
+
 
 # Plot annotation genes
 #circos.track(df$id, ylim=c(0,1), track.height=0.015, cell.padding=c(0,0,0,0), bg.border = 'white')
@@ -204,6 +213,7 @@ if (nrow(genes) > 1){
 }
 
 
+
 ## Add text to genes 
 #for (pos in 1:nrow(genes)){
 #	circos.text(((genes[pos,5]+genes[pos,6])/2), 0.5, labels= genes[pos, 2], cex= 1.2, sector.index = chrom_name, track.index=4, bg.border = 'white', facing= 'bending.inside')
@@ -212,12 +222,16 @@ if (nrow(genes) > 1){
 # Histogram - read coverage
 circos.track(factors = df$id, ylim = c(0, max_h), bg.col = 'gray96', bg.border = 'white')
 
+
+
 circos.lines(construct_table$position, construct_table$read_depth, sector.index = construct_name, type = "s", area = TRUE, col = "#A4A4A4")
 circos.lines(chrom_table$position, chrom_table$read_depth, sector.index = chrom_name, type = "s", area = TRUE, col = "#A4A4A4")
 
 
 
 # links
+head(sup_links)
+head(links)
 
 for (i in 1:nrow(sup_links)){
 	tryCatch({
@@ -232,8 +246,6 @@ for (i in 1:nrow(sup_links)){
     )
 }
 
-#head(sup_links)
-#head(links)
 for (i in 1:nrow(links)){
 	tryCatch({
 	#print(sup_links[i,6])
