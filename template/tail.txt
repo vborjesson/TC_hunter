@@ -6,6 +6,6 @@
 </body>
 
 <footer>
-  <p align="center"> TC-hunter v.0.0 &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; Contact information: https://github.com/vborjesson/TC_hunter</p>
+  <p align="center"> TC-hunter v1.0 &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; Contact information: https://github.com/vborjesson/TC_hunter</p>
 
 </footer>
