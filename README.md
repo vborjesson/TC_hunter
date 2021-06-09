@@ -152,11 +152,6 @@ In order to get the IGV figures you need to have GUI available. If not; you can 
 $ igv.sh -b <sample_name.bat>
 ``` 
 
-## Run TC_hunter using test data 
-
-```
-cp TC_hunter/
-```
 
 ## Understand your output 
 
