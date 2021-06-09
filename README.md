@@ -160,12 +160,12 @@ cp TC_hunter/
 
 ## Understand your output 
 
-TC-hunter finds insertion sites based on chimeric and discordant read pair. The figure below explains what it is.
+* TC-hunter finds insertion sites based on chimeric and discordant read pair. The figure below explains what it is.
 ![](Plots/softclipped.png)
 
-This is the output_summary.html 
+* This is the output_summary.html 
 ![](Plots/tc_hunter_out.png)
 
-For every predicted insertion site a circular figure is created. Red links, "lines" represent every discordant read pair supporting this event. Black links represent chimeric reads supporting this event.
+* For every predicted insertion site a circular figure is created. Red links, "lines" represent every discordant read pair supporting this event. Black links represent chimeric reads supporting this event.
 ![](Plots/circlize.png)!
 
