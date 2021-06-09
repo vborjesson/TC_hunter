@@ -212,10 +212,10 @@ process create_plots {
 		cp ${hist} .
 		cp ${sup_links} .
 		python ${params.tc_hunter_path}/Scripts/createOutput.py --hist ${hist} --links ${links} --sup_links ${sup_links} --karyo ${karyo} --construct $construct_file --WorkDir ${params.workingDir} --tchunter ${params.tc_hunter_path} --bam ${bam} --ref ${params.reference} --name ${ID}
-		cp *pdf ${params.workingDir} || :
-		cp *png ${params.workingDir} || :
 		mkdir ${params.workingDir}/meta_data_${ID}
 		mv ${params.workingDir}/${ID}_* ${params.workingDir}/meta_data_${ID}	
+		cp *pdf ${params.workingDir} || :
+		cp *png ${params.workingDir} || :
 	"""				
 }
 
