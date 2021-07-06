@@ -40,7 +40,7 @@ process bwa_mem {
 		set ID, path from fastq_path
 
 	output:
-		set ID, "${ID}_sorted.bam", "${ID}_sorted.bam.bai" into bwa_mem_out	
+		set ID, "${ID}_indexed.bam", "${ID}_indexed.bam.bai" into bwa_mem_out	
 		file "JointRefGenome.fasta" into bwa_mem_out_ref
 
 	script:
@@ -50,14 +50,17 @@ process bwa_mem {
 		cat ${params.construct_ref} >> JointRefGenome.fasta
 		bwa index JointRefGenome.fasta
 		bwa mem -t ${params.bwa_threads} JointRefGenome.fasta ${path}/*R1* ${path}/*R2* | samtools view -Sb - >  ${ID}.bam	
-		samtools sort -o ${ID}_sorted.bam ${ID}.bam
-		samtools index ${ID}_sorted.bam	
+		samtools sort -o ${ID}_indexed.bam ${ID}.bam
+		samtools index ${ID}_indexed.bam
+		samtools flagstat ${ID}_indexed.bam > ${params.workingDir}/${ID}_indexed.flagstat
+		samtools idxstats ${ID}_indexed.bam > ${params.workingDir}/${ID}_indexed.idxstats		
 	"""		
 }
 
 // outputs can only be used once as input in a new process, therefor we copy them into several identical outputs. 
 bwa_mem_out.into {
   	bwa_mem_out_extractReads
+  	bwa_mem_out_soft
 	bwa_mem_out_links
 	bwa_mem_out_hist
 	bwa_mem_out_plots
@@ -66,6 +69,7 @@ bwa_mem_out.into {
 
 //----------------------Extract reads with soft clips in construct = BWA mem-------------------------------
 
+/***
 process extract_reads_bwa {
 	publishDir workingdirectory, mode: 'copy', overwrite: true
 	errorStrategy 'ignore'
@@ -84,7 +88,7 @@ process extract_reads_bwa {
 		bash ${params.tc_hunter_path}/Scripts/runSoftClipExtraction.sh ${bam} ${ID}_softclipped.sam ${params.construct_name}	
 	"""		
 }
-
+***/
 
 
 //----------------------Extract reads with supplementary alignments in construct-------------------------------
@@ -119,13 +123,14 @@ process create_links_soft {
 	errorStrategy 'ignore'
 
 	input:
-		set ID, sam from softclipped_out
+		set ID, bam, bai from bwa_mem_out_soft
 
 	output:
 		set ID, "${ID}_links.txt" into links_out
 
 	script:
 	"""
+		bash ${params.tc_hunter_path}/Scripts/runSoftClipExtraction.sh ${bam} ${ID}_softclipped.sam ${params.construct_name}
 		python ${params.tc_hunter_path}/Scripts/FindLinks.py --sam ${sam} --mapq ${params.mapq}
 		mv links.txt ${ID}_links.txt 
 	"""	
@@ -233,7 +238,7 @@ process create_plots {
 		cp ${karyo} .
 		cp ${hist} .
 		cp ${sup_links} .
-		python ${params.tc_hunter_path}/Scripts/createOutput.py --hist ${hist} --links ${links} --sup_links ${sup_links} --karyo ${karyo} --construct $construct_file --WorkDir ${params.workingDir} --tchunter ${params.tc_hunter_path} --bam ${bam} --ref $jointref_path --name ${ID}
+		python ${params.tc_hunter_path}/Scripts/createOutput.py --hist ${hist} --links ${links} --sup_links ${sup_links} --karyo ${karyo} --construct $construct_file --WorkDir ${params.workingDir} --tchunter ${params.tc_hunter_path} --bam ${bam} --ref $jointref_path --name ${ID} 
 		mkdir ${params.workingDir}/${ID}_meta_data
 		mv ${params.workingDir}/${ID}_* ${params.workingDir}/${ID}_meta_data/			
 		cp *pdf ${params.workingDir} || :

@@ -51,6 +51,7 @@ bam = args.bam
 ref = args.ref
 sample_id = args.name
 
+
 ########################################### ranking function ###########################################
 
 # Read in file if more then 1 insertion site: count for how many supporting links they have and rank 
@@ -90,7 +91,8 @@ def rank_sites (kar, links, sup_links):
 
 						const_bp1, const_bp2 = find_construct_bp(links, R_karyo[0], int(R_karyo[1])+5000, int(R_karyo[2])-5000)
 						html_cons_bp = '{} - {}'.format(const_bp1, const_bp2) # bp position to be reported
-						igv_position_2 = '{}:{}-{}'.format(R_karyo_construct[0], const_bp1, const_bp2) # igv span zoomed
+						#igv_position_2 = '{}:{}-{}'.format(R_karyo_construct[0], const_bp1, const_bp2) # igv span zoomed
+						igv_position_2 = '{}:{}-{}'.format(R_karyo[0], int(R_karyo[1])+4600, int(R_karyo[2])-4600)	
 
 				score_tot = '-'
 
@@ -136,7 +138,7 @@ def rank_sites (kar, links, sup_links):
 				Gene_annotation_R(biomart_string)
 				out_name_R = '{}{}'.format(sample_id, str('_circlize.pdf'))
 				out_name_igv_1 = '{}{}'.format(sample_id, str('_igv_host.png'))
-				out_name_igv_2 = '{}{}'.format(sample_id, str('_igv_construct.png'))
+				out_name_igv_2 = '{}{}'.format(sample_id, str('_igv_host_zoomed.png'))
 				out_name_html = '{}{}'.format(sample_id, str('_output.html'))
 				makePlot_R(out_name_R, sample_id)
 				makePlot_igv_pre(igv_position_1, out_name_igv_1, sample_id)
@@ -231,13 +233,13 @@ def rank_sites (kar, links, sup_links):
 
 				out_name_R = '{}_{}{}'.format((i+1), sample_id, '_circlize.pdf') 
 				out_name_igv_1 = '{}_{}{}'.format((i+1), sample_id, '_igv_host.png') 
-				out_name_igv_2 = '{}_{}{}'.format((i+1), sample_id, '_igv_construct.png') 
+				out_name_igv_2 = '{}_{}{}'.format((i+1), sample_id, '_igv_host_zoomed.png') 
 				out_name_html = '{}_{}{}'.format((i+1), sample_id, '_output.html')
 				
 				makePlot_R(out_name_R, sample_id) # circlize plot
 
 				makePlot_igv_pre(igv_position_1, out_name_igv_1, sample_id) # igv host
-				makePlot_igv_pre(igv_position_2, out_name_igv_2, sample_id) # igv construct
+				makePlot_igv_pre(igv_position_2, out_name_igv_2, sample_id) # igv host zoomed in
 
 				print('igv plot are finished!')
 				print('\n')
@@ -313,6 +315,9 @@ def makeHTML_pre (host_chr, host_bp, cons_chr, cons_bp, circ_name, igv1_name, ig
 
 	cons_bp_list = cons_bp.split(' - ')
 	if cons_bp_list[0] == 'Unknown' or cons_bp_list[1] == 'Unknown':
+		in_size = 'Unknown'
+	elif cons_bp_list[0] == cons_bp_list[1]:
+		cons_bp_list[1] = 'Unknown'
 		in_size = 'Unknown'
 	else:
 		in_size = int(cons_bp_list[0]) - int(cons_bp_list[1])

@@ -26,6 +26,7 @@ parser.add_argument('--construct_length', dest='length', help = 'Length of the c
 parser.add_argument('--threshold', dest='thres', help = 'The number of links that most exist for one region to be reported', default=1, required=False)
 parser.add_argument('--construct_name', dest='construct', help = 'construct name', required=True)
 
+
 args = parser.parse_args()
 
 links = args.links
@@ -117,10 +118,16 @@ def create_karyotype (links, length):
 			print ('bp1 ', bp1)
 			print ('bp2 ', bp2)	
 
-			pos_list = [bp1, bp2]
+			pos_list = [int(bp1), int(bp2)]
 
 			bp_max = int(max(pos_list)) + 5000
 			bp_min = int(min(pos_list)) - 5000
+
+
+			print ('bp1 max ', bp_max)
+			print ('bp2 min ', bp_min)
+
+
 			chr_name = '{}{}'.format('chr', str(chrom))
 
 			f_out.write('{} {} {}\n'.format(chrom, bp_min, bp_max))

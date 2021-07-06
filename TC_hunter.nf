@@ -30,6 +30,10 @@ process samtools_index {
 	"""  
 		ln -s $bam ${ID}_indexed.bam	
 		samtools index ${ID}_indexed.bam
+		samtools flagstat ${ID}_indexed.bam > ${ID}_indexed.flagstat
+		samtools idxstats ${ID}_indexed.bam > ${ID}_indexed.idxstats
+		mv ${ID}_indexed.flagstat ${params.workingDir}
+		mv ${ID}_indexed.idxstats ${params.workingDir}
 	"""	
 	
 }
@@ -38,6 +42,7 @@ process samtools_index {
 // outputs can only be used once as input in a new process, therefor we copy them into several identical outputs. 
 bwa_mem_out.into {
   	bwa_mem_out_extractReads
+  	bwa_mem_out_soft
 	bwa_mem_out_links
 	bwa_mem_out_hist
 	bwa_mem_out_plots
@@ -46,6 +51,7 @@ bwa_mem_out.into {
 
 //----------------------Extract reads with soft clips in construct = BWA mem-------------------------------
 
+/***
 process extract_reads_bwa {
 	publishDir workingdirectory, mode: 'copy', overwrite: true
 	errorStrategy 'ignore'
@@ -65,7 +71,7 @@ process extract_reads_bwa {
 	"""	
 	
 }
-
+***/
 
 
 //----------------------Extract reads with supplementary alignments in construct-------------------------------
@@ -99,14 +105,15 @@ process create_links_soft {
 	errorStrategy 'ignore'
 
 	input:
-		set ID, sam from softclipped_out
+		set ID, bam, bai from bwa_mem_out_soft
 
 	output:
 		set ID, "${ID}_links.txt" into links_out
 
 	script:
 	"""
-		python ${params.tc_hunter_path}/Scripts/FindLinks.py --sam ${sam} --mapq ${params.mapq}
+		bash ${params.tc_hunter_path}/Scripts/runSoftClipExtraction.sh ${bam} ${ID}_softclipped.sam ${params.construct_name}
+		python ${params.tc_hunter_path}/Scripts/FindLinks.py --sam ${ID}_softclipped.sam --mapq ${params.mapq}
 		mv links.txt ${ID}_links.txt 
 	"""	
 
@@ -135,7 +142,7 @@ process create_karyotype {
 
 	script:
 	"""
-		python ${params.tc_hunter_path}/Scripts/createKaryotype.py --links ${links} --construct_length ${params.construct_length} --construct_name ${params.construct_name} 
+		python ${params.tc_hunter_path}/Scripts/createKaryotype.py --links ${links} --construct_length ${params.construct_length} --construct_name ${params.construct_name} --threshold ${params.supporting_reads}
 		mv karyotype.txt ${ID}_karyotype.txt 
 	"""	
 }
@@ -211,7 +218,7 @@ process create_plots {
 		cp ${karyo} .
 		cp ${hist} .
 		cp ${sup_links} .
-		python ${params.tc_hunter_path}/Scripts/createOutput.py --hist ${hist} --links ${links} --sup_links ${sup_links} --karyo ${karyo} --construct $construct_file --WorkDir ${params.workingDir} --tchunter ${params.tc_hunter_path} --bam ${bam} --ref ${params.reference} --name ${ID}
+		python ${params.tc_hunter_path}/Scripts/createOutput.py --hist ${hist} --links ${links} --sup_links ${sup_links} --karyo ${karyo} --construct $construct_file --WorkDir ${params.workingDir} --tchunter ${params.tc_hunter_path} --bam ${bam} --ref ${params.reference} --name ${ID} 
 		mkdir ${params.workingDir}/meta_data_${ID}
 		mv ${params.workingDir}/${ID}_* ${params.workingDir}/meta_data_${ID}	
 		cp *pdf ${params.workingDir} || :
