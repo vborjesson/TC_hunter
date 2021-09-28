@@ -31,7 +31,7 @@ args = parser.parse_args()
 
 links = args.links
 length = args.length
-threshold = int(args.thres)
+threshold = args.thres
 construct = args.construct
 
 
@@ -89,12 +89,8 @@ def create_karyotype (links, length):
 
 		# counter = 0
 		for chrom in karyo_dict:
-
-			if len(karyo_dict[chrom]) < threshold:
-				continue
-
-
-			print ('\n')	
+			if len(karyo_dict[chrom]) < int(threshold):
+				continue	
 
 			sorted_pos = collections.Counter(karyo_dict[chrom]).most_common()
 			print (sorted_pos)

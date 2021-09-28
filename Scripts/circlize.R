@@ -43,9 +43,9 @@ out <- args[1]
 construct_path <- args[2]
 construct <- data.table::fread(construct_path, data.table = F)
 
-sample_name = 'ins2_100'
-out = '1_ins2_100_circlize.pdf'
-construct_path = '/jumbo/WorkingDir/B19-001/Intermediate/validation/sim_data/fly_2ins_new/construct.txt'
+#sample_name = 'ins2_100'
+#out = '1_ins2_100_circlize.pdf'
+#construct_path = '/jumbo/WorkingDir/B19-001/Intermediate/validation/sim_data/fly_2ins_new/construct.txt'
 
 
 ####################################Only for test#####################

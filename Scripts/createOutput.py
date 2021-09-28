@@ -314,13 +314,9 @@ def makePlot_igv (sample_id):
 def makeHTML_pre (host_chr, host_bp, cons_chr, cons_bp, circ_name, igv1_name, igv2_name, html_name, rank_n, score):
 
 	cons_bp_list = cons_bp.split(' - ')
-	if cons_bp_list[0] == 'Unknown' or cons_bp_list[1] == 'Unknown':
-		in_size = 'Unknown'
-	elif cons_bp_list[0] == cons_bp_list[1]:
+
+	if cons_bp_list[0] == cons_bp_list[1]:
 		cons_bp_list[1] = 'Unknown'
-		in_size = 'Unknown'
-	else:
-		in_size = int(cons_bp_list[0]) - int(cons_bp_list[1])
 
 	print('creating HTML tables..')
 	subprocess.call ('echo "<tr>" >> out_middle.txt', shell=True)
@@ -328,7 +324,7 @@ def makeHTML_pre (host_chr, host_bp, cons_chr, cons_bp, circ_name, igv1_name, ig
 	subprocess.call ('echo "<th scope=row>' + rank_n + '</th>" >> out_middle.txt', shell=True)
 	subprocess.call ('echo "<td>' + str(score) + '</td>" >> out_middle.txt', shell=True)
 	subprocess.call ('echo "<td>' + host_chr + ' ' + host_bp + '</td>" >> out_middle.txt', shell=True)
-	subprocess.call ('echo "<td>' + cons_chr + ' ' + cons_bp + ' (' + str(in_size) + ') ' + '</td>" >> out_middle.txt', shell=True)
+	subprocess.call ('echo "<td>' + cons_chr + ' ' + cons_bp + '</td>" >> out_middle.txt', shell=True)
 	subprocess.call ('echo "<td><a href=' + circ_name + '><img src=' + circ_name + 'title='' width=40 height=40 /></a> &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;" >> out_middle.txt', shell=True)
 	subprocess.call ('echo "<td><a href=' + igv1_name + '><img src=' + igv1_name + 'title='' width=40 height=40 /></a> &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;" >> out_middle.txt', shell=True)
 	subprocess.call ('echo "<td><a href=' + igv2_name + '><img src=' + igv2_name + 'title='' width=40 height=40 /></a>" >> out_middle.txt', shell=True)

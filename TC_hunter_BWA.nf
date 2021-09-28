@@ -131,7 +131,7 @@ process create_links_soft {
 	script:
 	"""
 		bash ${params.tc_hunter_path}/Scripts/runSoftClipExtraction.sh ${bam} ${ID}_softclipped.sam ${params.construct_name}
-		python ${params.tc_hunter_path}/Scripts/FindLinks.py --sam ${sam} --mapq ${params.mapq}
+		python ${params.tc_hunter_path}/Scripts/FindLinks.py --sam ${ID}_softclipped.sam --mapq ${params.mapq}
 		mv links.txt ${ID}_links.txt 
 	"""	
 
@@ -160,7 +160,7 @@ process create_karyotype {
 
 	script:
 	"""
-		python ${params.tc_hunter_path}/Scripts/createKaryotype.py --links ${links} --construct_length ${params.construct_length} --construct_name ${params.construct_name} 
+		python ${params.tc_hunter_path}/Scripts/createKaryotype.py --links ${links} --construct_length ${params.construct_length} --construct_name ${params.construct_name} --threshold ${params.supporting_reads}
 		mv karyotype.txt ${ID}_karyotype.txt 
 	"""	
 }
