@@ -26,7 +26,6 @@ Clone the repository from Github and put it in your path (or add the direct path
 ```
 $ git clone https://github.com/vborjesson/TC_hunter.git
 $ export PATH="/home/yourPath/TC_hunter":$PATH
-$ source ~/.bashrc
 ```
 
 ## Software Dependencies
@@ -72,17 +71,17 @@ data.table
 
 
 
-## Create construct.txt
+## Create construct.txt file (required)
 
-In order to generate figures with construct information, you need to add that info. 
+In order to generate figures with construct information, you need to add this informtaion. 
 Create a txt-file with gene info per line, separated by space. The info should be; 1) name, 2) start position and 3) end position. 
 
 e.g.
 ```   
 Amp 1 500   
 lyz 1000 1200       
-Gene1 2000 5000		      
-Gene2 7000 7700	     		
+Gene3 2000 5000		      
+Gene4 7000 7700	     		
 ```
 
 
@@ -101,11 +100,11 @@ Add required information to config file
 | ------------- | ------------- | ------------- |
 |  WorkingDir | <Path/WorkingDir>  | Path to your working directory (this is where the output html and figures will be) |
 | TC_hunter_path  | <Path/TC_hunter>  | Path to TC_hunter, only TC_hunter if it's in your $PATH |
-| Construct_file  | <Path/construct.txt>  | Path to your construct.txt file (See construct file below) |
+| Construct_file  | <Path/construct.txt>  | Path to your construct.txt file (See `Create construct.txt file` above) |
 | Construct_length  | <Length>  | The length of your construct in numbers |
-| Construct_name  | <Name>  | The name of the construct, most match the name in the reference file |
+| Construct_name  | <Name>  | The name of the construct, most match the name in the reference file, no space |
 | bam | <Bam_directory> | The path to the directory where you have your bam file or (if several sampes) bam files. |
-| Reference | <Jointref.fa> | Path to the merged reference file including both host and construct genome |
+| Reference | <Jointref.fa> | Path to the merged reference file including both host and construct genome. `cat host_ref construct_ref > Jointref.fa` |
 
 e. g. [example.config](https://github.com/vborjesson/TC_hunter/blob/master/template/tchunter_example.config)
 
@@ -116,7 +115,7 @@ e. g. [example.config](https://github.com/vborjesson/TC_hunter/blob/master/templ
 | ------------- | ------------- | ------------- |
 |  WorkingDir | <Path/WorkingDir>  | Path to your working directory (this is where the output html and figures will be) |
 | TC_hunter_path  | <Path/TC_hunter>  | Path to TC_hunter, only TC_hunter if it's in your $PATH |
-| Construct_file  | <Path/construct.txt>  | Path to your construct.txt file (See construct file below) |
+| Construct_file  | <Path/construct.txt>  | Path to your construct.txt file (See `Create construct.txt file` above) |
 | Construct_length  | <Length>  | Length in numbers of your construct that will be plotted |
 | Construct_name  | <Name>  | Name of the construct, most match the neme in your reference file |
 | sample | <sample_directory> | Path to directory where you have the fastq-files (R1 and R2) |
@@ -128,7 +127,7 @@ e. g. [example.config](https://github.com/vborjesson/TC_hunter/blob/master/templ
 
 ## Run TC_hunter.nf
 
-Before running, make sure you have a config file with all required information (see Config).  
+Before running, make sure you have a config file with all required information (see "Make Configuration file").  
 
 
 ```
@@ -137,7 +136,7 @@ $ nextflow TC_hunter.nf -c <file.config> [-with-report <report name>]
 
 ## Run TC_hunter_BWA.nf
 
-Before running, make sure you have a config file with all required information (see Config).  
+Before running, make sure you have a config file with all required information (see "Make Configuration file").  
 
 
 ```
