@@ -189,3 +189,7 @@ TC_hunter reports each possible insertion site in an html file called ```output_
 For every predicted insertion site a circular figure is created. Red links, "lines" represent every discordant read pair supporting this event. Black links represent chimeric reads supporting this event.
 ![](Plots/circlize.png)!
 
+## Supporting material for TC_hunter paper 
+
+[Supporting data](https://github.com/vborjesson/TC_hunter_supplementary) 
+
