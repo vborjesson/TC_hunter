@@ -77,13 +77,23 @@ mkdir test_run
 cd test_run
 pip install gdown # If you don't already have it installed
 gdown https://drive.google.com/uc?id=1FXKJWD2yq1iUuL0lEATQ3Bqfr2vOyioK 
-cp /<path_to>/TC_hunter/Test_data/* .
+cp ../TC_hunter/Test_data/* .
 ```
 Then run TC_hunter:
 ```
-nextflow <path_to_TC_hunter>/TC_hunter.nf -c testrun.config --workingDir <realpath_to_test_run_dir> --tc_hunter_path <path_to_tchunter>
+nextflow ../TC_hunter/TC_hunter.nf -c testrun.config --workingDir <realpath_to_test_run_dir> --tc_hunter_path <realpath_to_tchunter>
 ```
 
+You should see TC_hunter running each process one after each other 
+1. samtools_index 
+2. create_links_sup
+3. create_links_soft 
+4. create_karyotype 
+5. create_histogram 
+6. create_plots 
+7. create_html
+
+When it's done check that you have an output_summary.html file. 
 
 ## Create construct.txt file (required)
 
@@ -168,12 +178,14 @@ $ igv.sh -b <sample_name.bat>
 
 ## Understand your output 
 
-* TC-hunter finds insertion sites based on chimeric and discordant read pair. The figure below explains what it is.
+TC-hunter finds insertion sites based on chimeric and discordant read pair. 
 ![](Plots/softclipped.png)
 
-* This is the output_summary.html 
+TC_hunter reports each possible insertion site in an html file called ```output_summary.html```. The file contains 5 columns; 1) Ranking - best hit based on score is ranked first, second best second etc, 2) Score - Based on the number of chimeric and discordant read pairs supporting this insertion site, 3) Breakpoint host - Where in the host is this insertionsite located, 4) Breakpoint construct - Where in the construct is this insertion site located, 5) figures - three figures I) circular plot (see below), II) igv, III) igv more zoomed in. 
+
+* output_summary.html 
 ![](Plots/tc_hunter_out.png)
 
-* For every predicted insertion site a circular figure is created. Red links, "lines" represent every discordant read pair supporting this event. Black links represent chimeric reads supporting this event.
+For every predicted insertion site a circular figure is created. Red links, "lines" represent every discordant read pair supporting this event. Black links represent chimeric reads supporting this event.
 ![](Plots/circlize.png)!
 
