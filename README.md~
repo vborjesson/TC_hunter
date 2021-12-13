@@ -32,7 +32,7 @@ $ export PATH="/home/yourPath/TC_hunter":$PATH
 
 In order to run TC_hunter you need to have some programs installed. Here's three options on how you can do it: 
 
-1. Install required programs and tools using conda yml-file (prefered). Has been tested on Anconda3, Anaconda2 and Miniconda2  
+1. Install required programs and tools using Anaconda yml-file (prefered)
 ```
 $ conda env create --file TC_hunter/Scripts/TC_hunter.yml
 $ source activate TC_hunter_v1.0

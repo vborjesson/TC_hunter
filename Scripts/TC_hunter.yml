@@ -1,4 +1,4 @@
-name: env_nobuilds
+name: TC_hunter_v1.0
 channels:
   - anaconda
   - r
