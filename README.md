@@ -141,8 +141,8 @@ e. g. [example.config](https://github.com/vborjesson/TC_hunter/blob/master/templ
 | TC_hunter_path  | <Path/TC_hunter>  | Path to TC_hunter, only TC_hunter if it's in your $PATH |
 | Construct_file  | <Path/construct.txt>  | Path to your construct.txt file (See `Create construct.txt file` above) |
 | Construct_length  | <Length>  | Length in numbers of your construct that will be plotted |
-| Construct_name  | <Name>  | Name of the construct, most match the neme in your reference file |
-| sample | <sample_directory> | Path to directory where you have the fastq-files (R1 and R2) |
+| Construct_name  | <Name>  | Name of the construct, most match the name in your reference file |
+| sample | <sample_directory> | Path to directory where you have the fastq-files (needs to have the name 'R1' and 'R2') |
 | folder | <sample_directory> | Path to directory containing one directory for each sample. The name of the samples will be the same as the directory names |
 | host_ref | <host_ref.fa> | Path to host reference file |
 | construct_ref | <construct_ref.fa> | Path to construct reference file |
