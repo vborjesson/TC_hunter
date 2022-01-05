@@ -9,6 +9,44 @@ sequences = Channel
                 .map { file -> tuple(file.baseName, file) }  
 
 
+//----------------------------- HELP MESSAGE ------------------------------------
+
+if (params.help) {
+    helpMessage()
+    exit 0
+}
+
+def helpMessage() {
+  log.info """
+
+Usage:
+It's recomended to use the config file to add all arguments, but you can also add it in the command line. 
+nextflow run TC_hunter.nf -c tc_hunter.config [other Nextflow arguments]
+
+Mandatory arguments
+--workingDir 				Working directory path
+--tc_hunter_path			TC_hunter path
+--construct_file 			construct.txt path
+--construct_length 			Length of construct, a number
+--construct_name			construct name, must be identical to identifer in construct ref fasta file 
+--bam 						for one and several samples, path to bam folder with an asterix e.g. bamfiles/*bam
+--reference 				path to reference file (fasta) containing both host and construct genome. 
+
+Optional arguments:
+--mapq      				mapping quality threshold for soft clipped links [30]
+--supporting_reads 			Number of supporting chimeric reads needed to call a TIS [1]
+--help                      This usage statement
+
+other optional Nextflow arguments
+-resume						Execute the script using the cached results, useful to continue executions that was stopped by an error
+-with-report				Create processes execution html report
+
+"""
+}
+
+
+//--------------------- TC-HUNTER MAIN ------------------------------------
+
 
 
 //----------------------Samtools sort and index-------------------------------
