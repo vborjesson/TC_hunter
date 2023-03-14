@@ -76,7 +76,7 @@ Download data
 mkdir test_run 
 cd test_run
 pip install gdown # If you don't already have it installed
-gdown https://drive.google.com/uc?id=1FXKJWD2yq1iUuL0lEATQ3Bqfr2vOyioK 
+gdown https://drive.google.com/drive/folders/1Y-iCNo71OVmf3QqJeFrukxUlQGDojSKx?usp=sharing
 cp ../TC_hunter/Test_data/* .
 ```
 Then run TC_hunter:
